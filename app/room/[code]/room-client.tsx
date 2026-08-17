@@ -2,6 +2,11 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { BlackjackState } from "../../../lib/games/blackjack";
+import {
+  CardArtwork,
+  CardBackArt,
+  cardDisplayName,
+} from "../../components/playing-card";
 
 type RoomGameId = "doudizhu" | "zhajinhua" | "holdem" | "blackjack";
 type Card = { id?: string; rank: string; suit: string };
@@ -71,8 +76,7 @@ const gameNames: Record<RoomGameId, string> = {
   holdem: "德州扑克",
   blackjack: "21 点",
 };
-const cardName = (card: Card) =>
-  card.rank === "BJ" ? "小王" : card.rank === "RJ" ? "大王" : card.rank;
+const cardName = (card: Card) => cardDisplayName(card);
 
 function RoomCards({
   cards,
@@ -97,8 +101,7 @@ function RoomCards({
             key={id}
             onClick={() => onToggle?.(id)}
           >
-            {cardName(card)}
-            <small>{card.suit}</small>
+            <CardArtwork rank={card.rank} suit={card.suit} />
           </button>
         );
       })}
@@ -350,7 +353,9 @@ function RoomGameTable({
         </div>
         <div className="room-winning-cards">
           {game.target?.cards.map((card, index) => (
-            <span key={card.id ?? index}>{cardName(card)}</span>
+            <span aria-label={cardName(card)} key={card.id ?? index}>
+              <CardArtwork rank={card.rank} suit={card.suit} />
+            </span>
           ))}
         </div>
         <RoomCards cards={game.myHand ?? []} disabled={!myTurn || game.phase !== "playing"} onToggle={onToggle} selected={selected} />
@@ -375,7 +380,13 @@ function RoomGameTable({
       <>
         <div className="room-game-meta"><span>第 {game.round} 轮</span><strong>底池 {game.pot} · 闷注 {game.stake}</strong></div>
         <RoomCards cards={game.myHand ?? []} />
-        {!game.myHand?.length && <div className="room-card-backs">◆ ◆ ◆</div>}
+        {!game.myHand?.length && (
+          <div className="room-card-backs" aria-label="三张暗牌">
+            <span><CardBackArt /></span>
+            <span><CardBackArt /></span>
+            <span><CardBackArt /></span>
+          </div>
+        )}
         <div className="room-inline-controls">
           {myTurn && game.phase !== "done" && (
             <>

@@ -469,17 +469,18 @@ button {
   width: 64px;
   height: 88px;
   margin-left: -12px;
+  overflow: hidden;
   background: #f9f9f5;
   border: 1px solid #00000022;
-  border-radius: 6px;
+  border-radius: 8px;
   color: #171717;
-  padding: 7px;
+  padding: 0;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: flex-start;
-  box-shadow: 0 4px 10px #0003;
-  transition: transform 0.15s;
+  box-shadow: 0 5px 12px #0003, inset 0 0 0 2px #fff9;
+  transition: transform 0.16s ease, box-shadow 0.16s ease;
   position: relative;
 }
 .playing-card:first-child {
@@ -494,34 +495,14 @@ button {
 .playing-card.selected {
   transform: translateY(-16px);
   outline: 3px solid #f2c94c;
-  outline-offset: 2px;
+  outline-offset: 3px;
+  box-shadow: 0 12px 24px #0003, inset 0 0 0 2px #fff9;
 }
 .ddz-card {
   cursor: pointer;
 }
-.ddz-card.joker b {
-  writing-mode: vertical-rl;
-  font-size: 11px;
-}
-.playing-card b {
-  font: 700 15px var(--font-mono);
-}
-.playing-card span {
-  font-size: 24px;
-  align-self: flex-end;
-}
-.playing-card .red {
-  color: #bd332b;
-}
 .playing-card.hidden {
-  background: repeating-linear-gradient(
-    45deg,
-    #e8e8e2,
-    #e8e8e2 4px,
-    #d4d4ce 4px,
-    #d4d4ce 6px
-  );
-  color: #555;
+  background: #f2f2ef;
   align-items: center;
   justify-content: center;
 }
@@ -533,60 +514,89 @@ button {
   filter: grayscale(1);
   transform: translateY(8px);
 }
-.playing-card .card-corner {
+.card-artwork {
   position: absolute;
-  top: 7px;
-  left: 8px;
+  inset: 0;
+  display: block;
+  overflow: hidden;
+  color: #171717;
+  background:
+    radial-gradient(circle at 50% 42%, #fff 0 30%, transparent 68%),
+    #f9f9f5;
+}
+.card-artwork::after {
+  position: absolute;
+  inset: 3px;
+  z-index: 5;
+  border: 1px solid currentColor;
+  border-radius: 4px;
+  content: "";
+  opacity: 0.13;
+  pointer-events: none;
+}
+.card-artwork.is-red {
+  color: #c43c36;
+}
+.card-corner {
+  position: absolute;
+  z-index: 4;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0;
-  color: #161616;
   line-height: 1;
 }
-.playing-card .card-corner b {
-  font: 750 16px/1 var(--font-sans);
+.card-corner-top {
+  top: 7px;
+  left: 7px;
+}
+.card-corner-bottom {
+  right: 7px;
+  bottom: 7px;
+  transform: rotate(180deg);
+}
+.card-corner b {
+  font: 760 15px/0.95 var(--font-mono);
   letter-spacing: -0.04em;
 }
-.playing-card .card-corner i {
-  margin-top: 3px;
+.card-corner i {
+  margin-top: 2px;
+  font: normal 12px/1 var(--font-sans);
+}
+.card-pips {
+  position: absolute;
+  inset: 13px 12px;
+  display: block;
+}
+.card-pips i {
+  position: absolute;
+  display: block;
+  transform: translate(-50%, -50%);
   font: normal 13px/1 var(--font-sans);
 }
-.playing-card .card-center {
+.card-pips i.is-inverted {
+  transform: translate(-50%, -50%) rotate(180deg);
+}
+.card-figure {
   position: absolute;
-  right: 8px;
-  bottom: 7px;
-  color: #1d1d1d;
-  font: 400 27px/1 var(--font-sans);
+  inset: 13px 8px 10px;
+  z-index: 2;
+  display: block;
+  background-image: var(--card-figure);
+  background-position: 50% 18%;
+  background-size: cover;
+  filter: saturate(0.92) contrast(1.03);
 }
-.playing-card .card-corner.red,
-.playing-card .card-center.red {
-  color: #c43c36;
+.card-joker {
+  inset: 8px 4px 7px;
+  background-position: center;
 }
-.card-back-mark {
-  width: 20px;
-  height: 20px;
-  align-self: center !important;
-  border: 1px solid #6f7680;
-  transform: rotate(45deg);
-  background: #f5f5f1;
-  box-shadow: inset 0 0 0 4px #d4d7d5;
-}
-.joker-name {
+.card-back-art {
   position: absolute;
-  top: 8px;
-  left: 7px;
-  writing-mode: vertical-rl;
-  color: #222;
-  font: 700 10px/1 var(--font-sans) !important;
-  letter-spacing: 0.12em;
-}
-.joker-star {
-  position: absolute;
-  right: 8px;
-  bottom: 8px;
-  color: #c43c36;
-  font-size: 23px !important;
+  inset: 4px;
+  display: block;
+  border-radius: 4px;
+  background: #17243f url("/cards/card-back.png") center / cover no-repeat;
+  box-shadow: inset 0 0 0 1px #f2c94c;
 }
 
 /* 斗地主：三方座位、各自出牌区与本墩记录 */
@@ -688,13 +698,7 @@ button {
   height: 38px;
   border: 1px solid #b9bdba;
   border-radius: 4px;
-  background: repeating-linear-gradient(
-    45deg,
-    #ecece7,
-    #ecece7 3px,
-    #d4d7d5 3px,
-    #d4d7d5 5px
-  );
+  background: #17243f url("/cards/card-back.png") center / cover no-repeat;
   box-shadow: 0 3px 8px #07102a55;
 }
 .stack-backs span:nth-child(2) {
@@ -744,33 +748,33 @@ button {
   background: #fff;
   color: #171717;
   box-shadow: 0 2px 5px #07102a33;
+  overflow: hidden;
 }
-.played-card .card-corner {
-  position: absolute;
+.played-card .card-corner-top {
   top: 4px;
   left: 5px;
-  display: flex;
-  flex-direction: column;
-  line-height: 1;
+}
+.played-card .card-corner-bottom {
+  right: 5px;
+  bottom: 4px;
 }
 .played-card .card-corner b {
-  font: 750 11px var(--font-sans);
+  font-size: 9px;
 }
 .played-card .card-corner i {
-  font: normal 9px var(--font-sans);
+  font-size: 7px;
 }
-.played-card .card-center {
-  position: absolute;
-  right: 4px;
-  bottom: 4px;
-  font-size: 14px;
+.played-card .card-pips {
+  inset: 7px 6px;
 }
-.played-card .red {
-  color: #c43c36;
+.played-card .card-pips i {
+  font-size: 7px;
 }
-.played-card.joker b {
-  writing-mode: vertical-rl;
-  font-size: 8px;
+.played-card .card-figure {
+  inset: 7px 3px 6px;
+}
+.played-card .card-joker {
+  inset: 4px 1px;
 }
 .ddz-trick-zone {
   width: min(680px, 68%);
@@ -825,8 +829,8 @@ button {
 .played-cards.current .played-card .card-corner i {
   font-size: 12px;
 }
-.played-cards.current .played-card .card-center {
-  font-size: 22px;
+.played-cards.current .played-card .card-pips i {
+  font-size: 11px;
 }
 .open-trick {
   display: flex;
@@ -1498,6 +1502,7 @@ button {
   gap: 4px;
 }
 .room-winning-cards span {
+  position: relative;
   display: grid;
   width: 52px;
   height: 72px;
@@ -1507,6 +1512,7 @@ button {
   color: #171717;
   font: 750 18px var(--font-mono);
   box-shadow: 0 8px 18px #07102a66;
+  overflow: hidden;
 }
 .room-bid-history {
   position: absolute;
@@ -1530,6 +1536,7 @@ button {
 }
 .room-my-hand button,
 .room-card-row button {
+  position: relative;
   display: flex;
   width: 58px;
   height: 82px;
@@ -1539,9 +1546,10 @@ button {
   justify-content: space-between;
   border: 1px solid #0002;
   border-radius: 7px;
+  overflow: hidden;
   background: #f9f9f5;
   color: #171717;
-  padding: 7px;
+  padding: 0;
   cursor: pointer;
   font: 750 16px var(--font-mono);
   box-shadow: 0 8px 18px #07102a66;
@@ -1560,10 +1568,6 @@ button {
 .room-my-hand button:disabled,
 .room-card-row button:disabled {
   cursor: default;
-}
-.room-my-hand small,
-.room-card-row small {
-  font-size: 15px;
 }
 .room-inline-controls {
   position: absolute;
@@ -1603,10 +1607,21 @@ button {
   position: absolute;
   bottom: 110px;
   left: 50%;
+  display: flex;
   transform: translateX(-50%);
-  color: #fff;
-  font: 700 28px var(--font-mono);
-  letter-spacing: 0.15em;
+}
+.room-card-backs > span {
+  position: relative;
+  width: 54px;
+  height: 76px;
+  margin-left: -20px;
+  overflow: hidden;
+  border: 1px solid #ffffff73;
+  border-radius: 7px;
+  box-shadow: 0 8px 18px #07102a66;
+}
+.room-card-backs > span:first-child {
+  margin-left: 0;
 }
 .room-theme-zhajinhua .room-table {
   background: #963d32;
@@ -1698,10 +1713,6 @@ button {
     flex: 0 0 44px;
     font-size: 13px;
     padding: 5px;
-  }
-  .room-my-hand small,
-  .room-card-row small {
-    font-size: 12px;
   }
   .room-inline-controls {
     right: 10px;

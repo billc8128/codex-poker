@@ -2,6 +2,11 @@
 /* eslint-disable @next/next/no-html-link-for-pages */
 import { useEffect, useRef, useState } from "react";
 import {
+  CardArtwork,
+  CardBackArt,
+  cardDisplayName,
+} from "../../components/playing-card";
+import {
   Card,
   cardLabel,
   randomGameSeed,
@@ -110,23 +115,11 @@ function CardView({
       aria-label={hidden ? "暗牌" : card ? cardLabel(card) : "空牌"}
     >
       {hidden ? (
-        <span className="card-back-mark" />
+        <CardBackArt />
       ) : (
-        card && <CardFace rank={card.rank} suit={card.suit} />
+        card && <CardArtwork rank={card.rank} suit={card.suit} />
       )}
     </button>
-  );
-}
-function CardFace({ rank, suit }: { rank: string; suit: string }) {
-  const red = suit === "♥" || suit === "♦";
-  return (
-    <>
-      <span className={`card-corner ${red ? "red" : ""}`}>
-        <b>{rank}</b>
-        <i>{suit}</i>
-      </span>
-      <span className={`card-center ${red ? "red" : ""}`}>{suit}</span>
-    </>
   );
 }
 function Hand({ cards, hidden = false }: { cards: Card[]; hidden?: boolean }) {
@@ -172,20 +165,11 @@ function DdzCardView({
       className={`playing-card ddz-card ${fanIndex !== undefined ? "fan-card" : ""} ${selected ? "selected" : ""} ${hovered ? "pointer-hover" : ""} ${joker ? "joker" : ""}`}
       onClick={onClick}
       aria-pressed={selected}
-      aria-label={`${card.rank}${joker ? "王" : card.suit}`}
+      aria-label={cardDisplayName(card)}
       disabled={!onClick}
       style={fanStyle}
     >
-      {joker ? (
-        <>
-          <span className="joker-name">
-            {card.rank === "BJ" ? "小王" : "大王"}
-          </span>
-          <span className="joker-star">★</span>
-        </>
-      ) : (
-        <CardFace rank={card.rank} suit={card.suit} />
-      )}
+      <CardArtwork rank={card.rank} suit={card.suit} />
     </button>
   );
 }
@@ -193,11 +177,7 @@ function DdzPlayedCard({ card }: { card: DdzCard }) {
   const joker = card.rank === "BJ" || card.rank === "RJ";
   return (
     <span className={`played-card ${joker ? "joker" : ""}`}>
-      {joker ? (
-        <b>{card.rank === "BJ" ? "小王" : "大王"}</b>
-      ) : (
-        <CardFace rank={card.rank} suit={card.suit} />
-      )}
+      <CardArtwork rank={card.rank} suit={card.suit} />
     </span>
   );
 }
@@ -655,8 +635,9 @@ export function GameTable({
                         className="playing-card hidden"
                         disabled
                         key={c.id}
+                        aria-label="暗置底牌"
                       >
-                        ◆
+                        <CardBackArt />
                       </button>
                     ))}
                   </div>
