@@ -2374,7 +2374,7 @@ button {
     flex-basis: 56px;
   }
   .hero-floating-seat {
-    bottom: 300px;
+    bottom: 178px;
     left: 15px;
   }
   .hero-last-play {
@@ -2383,26 +2383,33 @@ button {
     display: flex;
   }
   .fan-hand {
-    right: 0;
-    bottom: 92px;
-    left: 0;
-    height: 200px;
-    padding: 8px 10px 4px;
-    display: grid;
-    grid-template-columns: repeat(8, minmax(0, 1fr));
-    grid-template-rows: repeat(3, 62px);
-    align-items: end;
-    overflow: visible;
+    right: 8px;
+    bottom: 76px;
+    left: 8px;
+    height: 82px;
+    padding: 10px 8px 6px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: safe center;
+    overflow-x: auto;
+    overflow-y: visible;
+    scrollbar-width: none;
+  }
+  .fan-hand::-webkit-scrollbar {
+    display: none;
   }
   .fan-card {
     position: relative;
     left: auto !important;
     bottom: auto;
-    width: 44px;
-    height: 60px;
-    margin: 0;
-    justify-self: center;
+    width: 40px;
+    height: 56px;
+    margin: 0 0 0 -24px;
+    flex: 0 0 40px;
     transform: none;
+  }
+  .fan-card:first-child {
+    margin-left: 0;
   }
   .fan-card:not(:disabled):hover,
   .fan-card:not(:disabled):focus-visible {
@@ -2416,20 +2423,37 @@ button {
     transform: translateY(-6px);
   }
   .fan-card .card-corner b {
-    font-size: 16px;
-  }
-  .fan-card .card-corner i {
     font-size: 13px;
   }
-  .fan-card .card-center {
-    font-size: 22px;
+  .fan-card .card-corner i {
+    font-size: 9px;
+  }
+  .fan-card .card-corner-top {
+    top: 5px;
+    left: 5px;
+  }
+  .fan-card .card-corner-bottom {
+    right: 5px;
+    bottom: 5px;
+  }
+  .fan-card .card-pips {
+    inset: 9px 7px;
+  }
+  .fan-card .card-pips i {
+    font-size: 9px;
+  }
+  .fan-card .card-figure {
+    inset: 9px 4px 7px;
+  }
+  .fan-card .card-joker {
+    inset: 5px 2px;
   }
   .fan-scroll-cue {
     display: none;
   }
   .bidding-hand-label {
     right: 14px;
-    bottom: 298px;
+    bottom: 160px;
     left: 14px;
     font-size: 10px;
   }
@@ -2482,19 +2506,52 @@ button {
 
 @media (min-width: 480px) and (max-width: 700px) {
   .hero-floating-seat {
-    bottom: 250px;
+    bottom: 184px;
   }
   .fan-hand {
-    height: 142px;
-    grid-template-columns: repeat(10, minmax(0, 1fr));
-    grid-template-rows: repeat(2, 64px);
+    height: 88px;
   }
   .fan-card {
     width: 48px;
     height: 66px;
+    margin-left: -22px;
+    flex-basis: 48px;
   }
   .bidding-hand-label {
-    bottom: 240px;
+    bottom: 166px;
+  }
+}
+
+@media (max-width: 700px) and (max-height: 560px) {
+  .bidding-stage {
+    position: absolute;
+    top: 38px;
+    right: 12px;
+    left: 12px;
+    margin: 0;
+    gap: 6px;
+  }
+  .bidding-stage .hand {
+    min-height: 58px;
+  }
+  .bidding-stage .playing-card {
+    width: 42px;
+    height: 58px;
+    margin-left: -13px;
+  }
+  .bidding-stage strong {
+    font-size: 16px;
+  }
+  .bid-history {
+    gap: 5px;
+  }
+  .bid-history > span {
+    padding: 4px 7px;
+  }
+  .bid-guidance {
+    max-width: 100%;
+    font-size: 9px !important;
+    line-height: 1.2 !important;
   }
 }
 
