@@ -1,6 +1,8 @@
 # Codex Poker
 
-Codex Poker is a local-first card-game MVP for Codex/ChatGPT. It includes four solo tables against deterministic local strategy bots: three-player classic 斗地主, three-player 扎金花, heads-up no-limit Texas Hold’em, and Blackjack. Mtok is a virtual score only—there is no purchase, deposit, withdrawal, exchange, or cash value.
+Codex Poker is a Codex plugin and ChatGPT Sites card-game app. It includes four solo tables against local strategy bots: three-player classic 斗地主, three-player 扎金花, six-max no-limit Texas Hold’em, and Blackjack. Mtok is a virtual score only—there is no purchase, deposit, withdrawal, exchange, or cash value.
+
+Deployed Site: https://codex-poker.ccb8128.chatgpt.site
 
 ## Run locally
 
@@ -11,30 +13,31 @@ npm install
 npm run dev
 ```
 
-Open the URL printed by Vinext (normally `http://localhost:3000`). Local development uses the explicit `Local guest` identity. The guest score is stored in local Miniflare D1.
+Open the URL printed by Vinext. Local development uses an explicit in-memory `Local guest` account; restarting the dev process resets that guest account. Production never falls back to the shared guest identity.
 
 ```bash
 npm test
 npm run lint
 npm run build
+npm run test:html
 ```
 
 ## Codex plugin
 
-The plugin lives at `plugins/codex-poker`. Its MCP tool opens the lobby or one named table. Keep the site running, then install the repository marketplace and plugin:
+The plugin lives at `plugins/codex-poker`. Its MCP tool opens the deployed lobby or one named table:
 
 ```bash
 codex plugin marketplace add .
 codex plugin add codex-poker@codex-poker-local
 ```
 
-Start a new Codex task after installation, then ask “Open the Codex Poker lobby” or “Start a Blackjack table.” The MCP URL defaults to port 3000; update `CODEX_POKER_URL` in `plugins/codex-poker/.mcp.json` if Vinext selected another port.
+Start a new Codex task after installation, then ask “Open the Codex Poker lobby” or “Start a Blackjack table.” To test a local server instead, temporarily override `CODEX_POKER_URL` in `plugins/codex-poker/.mcp.json`.
 
 ## ChatGPT Sites
 
-The app uses the Sites Vinext plugin and declares logical D1 binding `DB` in `.openai/hosting.json`. `app/chatgpt-auth.ts` reads the Sites-provided `oai-authenticated-user-*` headers. On Sites, the lobby uses the native `/signin-with-chatgpt` and `/signout-with-chatgpt` routes; locally, missing identity headers safely fall back to the non-privileged guest identity.
+The app uses the Sites Vinext plugin and logical D1 binding `DB`. The public lobby offers native Sign in with ChatGPT; production game and account routes require that identity. `app/chatgpt-auth.ts` reads the Sites-provided `oai-authenticated-user-*` headers, while local development alone may use the non-privileged guest identity.
 
-The score adapter uses D1 through prepared statements. The schema is in `db/schema.ts` and the checked-in SQL migration is `drizzle/0000_game_results.sql`. No production database or public deployment is created by this repository.
+Each stable Sites user ID maps to one `player_accounts` record with a 10,000 Mtok starting balance. D1 also stores an append-only game-result history. Every client settlement includes a UUID and the unique `(user_id, round_id)` index makes retries idempotent. The schema is in `db/schema.ts`; checked-in migrations are under `drizzle/`. Because gameplay runs locally in the browser and Mtok has no monetary value, this MVP treats the client result as trusted and does not provide an anti-cheat leaderboard.
 
 ## Implemented table rules
 

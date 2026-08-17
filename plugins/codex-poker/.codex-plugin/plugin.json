@@ -1,19 +1,26 @@
 {
   "name": "codex-poker",
-  "version": "0.1.0",
-  "description": "Open a local Codex Poker table and play four virtual-point card games.",
+  "version": "0.2.0+codex.20260817145703",
+  "description": "Open Codex Poker on ChatGPT Sites and play four virtual-point card games.",
   "author": {
-    "name": "Local developer"
+    "name": "Codex Poker"
   },
   "skills": "./skills/",
   "interface": {
     "displayName": "Codex Poker",
-    "shortDescription": "Play four poker tables against AI.",
-    "longDescription": "Opens the Codex Poker lobby or a requested game: Fight the Landlord, Three Card Brag, Texas Hold’em, or Blackjack. Uses virtual Mtok points only.",
-    "developerName": "Local developer",
+    "shortDescription": "Play four complete card tables against strategy AI.",
+    "longDescription": "Opens the deployed Codex Poker lobby or a requested game: Fight the Landlord, Three Card Brag, six-max Texas Hold\u2019em, or Blackjack. ChatGPT sign-in keeps each player\u2019s virtual Mtok balance and history separate.",
+    "developerName": "Codex Poker",
     "category": "Lifestyle",
-    "capabilities": ["Interactive"],
-    "defaultPrompt": ["Open the Codex Poker lobby.", "Start a Blackjack table.", "Start a Texas Hold’em table."]
+    "capabilities": [
+      "Interactive"
+    ],
+    "websiteURL": "https://codex-poker.ccb8128.chatgpt.site",
+    "defaultPrompt": [
+      "Open the Codex Poker lobby.",
+      "Start a Blackjack table.",
+      "Start a six-max Texas Hold\u2019em table."
+    ]
   },
   "mcpServers": "./.mcp.json"
 }

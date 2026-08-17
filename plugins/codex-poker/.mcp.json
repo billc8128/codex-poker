@@ -3,7 +3,9 @@
     "codex-poker": {
       "command": "node",
       "args": ["${PLUGIN_ROOT}/mcp/server.mjs"],
-      "env": { "CODEX_POKER_URL": "http://localhost:3000" }
+      "env": {
+        "CODEX_POKER_URL": "https://codex-poker.ccb8128.chatgpt.site"
+      }
     }
   }
 }
