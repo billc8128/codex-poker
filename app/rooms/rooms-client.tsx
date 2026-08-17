@@ -6,7 +6,6 @@ import { FormEvent, useState } from "react";
 export function RoomsClient({ playerName }: { playerName: string }) {
   const [code, setCode] = useState("");
   const [gameType, setGameType] = useState("doudizhu");
-  const [maxPlayers, setMaxPlayers] = useState(6);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
@@ -16,7 +15,8 @@ export function RoomsClient({ playerName }: { playerName: string }) {
     setError("");
     const form = new FormData(event.currentTarget);
     const selectedGame = String(form.get("gameType") ?? "doudizhu");
-    const selectedMax = Number(form.get("maxPlayers") ?? 3);
+    const selectedMax =
+      selectedGame === "holdem" ? 6 : selectedGame === "blackjack" ? 5 : 3;
     const response = await fetch("/api/rooms", {
       method: "POST",
       headers: { "content-type": "application/json" },
@@ -67,7 +67,6 @@ export function RoomsClient({ playerName }: { playerName: string }) {
               onChange={(event) => {
                 const value = event.target.value;
                 setGameType(value);
-                setMaxPlayers(value === "blackjack" ? 5 : value === "holdem" ? 6 : 3);
               }}
               value={gameType}
             >
@@ -77,24 +76,6 @@ export function RoomsClient({ playerName }: { playerName: string }) {
               <option value="blackjack">21 点 · 1–5 人</option>
             </select>
           </label>
-          {(gameType === "holdem" || gameType === "blackjack") && (
-            <label>
-              座位数
-              <select
-                name="maxPlayers"
-                onChange={(event) => setMaxPlayers(Number(event.target.value))}
-                value={maxPlayers}
-              >
-                {(gameType === "holdem" ? [3, 4, 5, 6] : [1, 2, 3, 4, 5]).map(
-                  (count) => (
-                    <option key={count} value={count}>
-                      {count} 人桌
-                    </option>
-                  ),
-                )}
-              </select>
-            </label>
-          )}
           <button disabled={busy} type="submit">
             {busy ? "创建中…" : "创建房间"}
           </button>
