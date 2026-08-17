@@ -65,6 +65,7 @@ export type DdzState = {
   message: string;
   winner?: number;
   delta?: number;
+  autoAi: boolean;
 };
 
 const RANKS: DdzRank[] = [
@@ -365,7 +366,7 @@ function shuffledDdzDeck(seed: number) {
   }
   return cards;
 }
-export function newDoudizhu(seed = 4): DdzState {
+export function newDoudizhu(seed = 4, autoAi = true): DdzState {
   const d = shuffledDdzDeck(seed);
   const firstBidder = (((seed * 1664525 + 1013904223) >>> 0) % 3) as 0 | 1 | 2;
   const state: DdzState = {
@@ -388,12 +389,13 @@ export function newDoudizhu(seed = 4): DdzState {
     lastPlayer: null,
     multiplier: 1,
     actions: [],
+    autoAi,
     message:
       firstBidder === 0
         ? "轮到你：看完手牌后选择叫分或不叫。"
         : `AI ${firstBidder} 首先竞叫。`,
   };
-  return firstBidder === 0 ? state : autoBidUntilUser(state);
+  return !autoAi || firstBidder === 0 ? state : autoBidUntilUser(state);
 }
 
 function handBid(hand: DdzCard[]) {
@@ -408,7 +410,7 @@ function handBid(hand: DdzCard[]) {
 }
 function finalizeBid(s: DdzState): DdzState {
   if (s.highestBidder === null) {
-    const next = newDoudizhu(s.seed + 1);
+    const next = newDoudizhu(s.seed + 1, s.autoAi);
     return { ...next, message: "无人叫分，已重新发牌" };
   }
   const landlord = s.highestBidder,
@@ -451,8 +453,16 @@ function applyBid(s: DdzState, player: number, bid: number): DdzState {
   return next;
 }
 export function bidDoudizhu(s: DdzState, bid: number): DdzState {
-  if (s.phase !== "bidding" || s.currentPlayer !== 0) return s;
-  return autoBidUntilUser(applyBid(s, 0, bid));
+  return bidDoudizhuPlayer(s, 0, bid);
+}
+export function bidDoudizhuPlayer(
+  s: DdzState,
+  player: 0 | 1 | 2,
+  bid: number,
+): DdzState {
+  if (s.phase !== "bidding" || s.currentPlayer !== player) return s;
+  const next = applyBid(s, player, bid);
+  return s.autoAi && player === 0 ? autoBidUntilUser(next) : next;
 }
 function autoBidUntilUser(state: DdzState): DdzState {
   let next = state;
@@ -712,18 +722,40 @@ export function playDoudizhu(
   cardIds: string[],
   autoAi = true,
 ): DdzState {
-  if (s.phase !== "playing" || s.currentPlayer !== 0) return s;
-  const cards = s.hands[0].filter((c) => cardIds.includes(c.id));
-  const next = applyPlay(s, 0, cards);
+  return playDoudizhuPlayer(s, 0, cardIds, autoAi);
+}
+export function playDoudizhuPlayer(
+  s: DdzState,
+  player: 0 | 1 | 2,
+  cardIds: string[],
+  autoAi = false,
+): DdzState {
+  if (s.phase !== "playing" || s.currentPlayer !== player) return s;
+  const cards = s.hands[player].filter((card) => cardIds.includes(card.id));
+  const next = applyPlay(s, player, cards);
   return autoAi ? runAi(next) : next;
 }
 export function passDoudizhu(s: DdzState, autoAi = true): DdzState {
-  if (s.phase !== "playing" || s.currentPlayer !== 0) return s;
-  const next = applyPass(s, 0);
+  return passDoudizhuPlayer(s, 0, autoAi);
+}
+export function passDoudizhuPlayer(
+  s: DdzState,
+  player: 0 | 1 | 2,
+  autoAi = false,
+): DdzState {
+  if (s.phase !== "playing" || s.currentPlayer !== player) return s;
+  const next = applyPass(s, player);
   return autoAi ? runAi(next) : next;
 }
 export function legalDoudizhuSelection(s: DdzState, cardIds: string[]) {
-  const cards = s.hands[0].filter((c) => cardIds.includes(c.id)),
+  return legalDoudizhuSelectionForPlayer(s, 0, cardIds);
+}
+export function legalDoudizhuSelectionForPlayer(
+  s: DdzState,
+  player: 0 | 1 | 2,
+  cardIds: string[],
+) {
+  const cards = s.hands[player].filter((c) => cardIds.includes(c.id)),
     combo = classifyDoudizhu(cards);
   return {
     combo,

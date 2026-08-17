@@ -40,6 +40,14 @@
 
 验收来源：[Pagat Dou Dizhu rules](https://www.pagat.com/climbing/doudizhu.html)、[RLCard DouDizhu](https://github.com/datamllab/rlcard/tree/master/rlcard/games/doudizhu)、[DouZero](https://github.com/kwai/DouZero)。
 
+### 真人联机房
+
+- 私密房固定三名真人玩家，通过六位房间码或邀请链接加入。
+- 三人全部准备后由房主开始；服务端负责洗牌、发牌、行动顺序、合法性校验和结算。
+- 每个连接只接收自己的完整手牌，其他玩家只显示剩余张数；公共叫分、出牌与过牌向全房广播。
+- 断线重连保留原座位。每回合限时 45 秒：叫分阶段自动不叫；跟牌阶段自动过牌；必须首出时自动出最小单张。
+- 房间结算沿用本节地主/农民分值，并以幂等流水写入每名玩家的 Mtok 账户。
+
 ## 2. 扎金花（三人固定桌规）
 
 炸金花地方规则很多，本项目固定采用下列桌规，并在牌桌说明中展示：

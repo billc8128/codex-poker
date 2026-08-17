@@ -50,3 +50,7 @@ Each stable ChatGPT user ID or Codex plugin installation ID maps to one `player_
 - Game logic is isolated under `lib/games`; UI state is in the table client component. The current AI boundary can later be replaced by multiplayer actors without moving rules into the UI.
 
 The exact rule contract and source references are in `docs/RULES.md`. `npm test` covers hand ranking, legal/illegal actions and a complete game path for every table.
+
+## Multiplayer rooms
+
+The first real-time multiplayer mode is a private three-player 斗地主 room. The Site creates and joins rooms, while `codex-poker-rooms` runs one Cloudflare Durable Object per room with hibernating WebSockets, durable state, 45-second turn alarms, seat-preserving reconnects, private hands and server-side result settlement. Run the local pair with `npm run dev` and `npx wrangler dev --config rooms/wrangler.jsonc --port 8787`, then execute `npm run test:room:e2e`.

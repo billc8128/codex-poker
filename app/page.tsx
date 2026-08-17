@@ -26,6 +26,7 @@ export default async function Home() {
           CODEX / POKER
         </a>
         <div className="account">
+          {identity && <a href="/rooms">多人房</a>}
           <span className="status-dot" />
           {identity?.source === "chatgpt" ? (
             <>

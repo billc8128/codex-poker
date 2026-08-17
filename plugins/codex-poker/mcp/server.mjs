@@ -57,7 +57,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
     {
       name: "open_poker",
       description:
-        "Open the Codex Poker lobby or a specific virtual-point game table.",
+        "Open the Codex Poker lobby, multiplayer rooms, an invite code, or a specific virtual-point game table.",
       inputSchema: {
         type: "object",
         properties: {
@@ -65,6 +65,15 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
             type: "string",
             enum: [...slugs],
             description: "Optional game to open.",
+          },
+          multiplayer: {
+            type: "boolean",
+            description: "Open the multiplayer room lobby.",
+          },
+          roomCode: {
+            type: "string",
+            pattern: "^[A-Z2-9]{6}$",
+            description: "Optional six-character multiplayer invite code.",
           },
         },
       },
@@ -75,7 +84,14 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
   if (request.params.name !== "open_poker") throw new Error("Unknown tool");
   const game = request.params.arguments?.game;
-  const returnTo = game && slugs.has(game) ? `/play/${game}` : "/";
+  const roomCode = String(request.params.arguments?.roomCode ?? "").toUpperCase();
+  const returnTo = /^[A-Z2-9]{6}$/.test(roomCode)
+    ? `/room/${roomCode}`
+    : request.params.arguments?.multiplayer
+      ? "/rooms"
+      : game && slugs.has(game)
+        ? `/play/${game}`
+        : "/";
   const url = `${base}/plugin-login?token=${encodeURIComponent(launchToken())}&return_to=${encodeURIComponent(returnTo)}`;
   return {
     content: [
