@@ -2433,17 +2433,28 @@ button {
     left: 5px;
   }
   .fan-card .card-corner-bottom {
-    right: 5px;
-    bottom: 5px;
+    display: none;
   }
   .fan-card .card-pips {
     inset: 9px 7px;
   }
   .fan-card .card-pips i {
-    font-size: 9px;
+    display: none;
+    font-size: 14px;
+  }
+  .fan-card .card-pips i:first-child {
+    top: 58% !important;
+    left: 72% !important;
+    display: block;
+    transform: translate(-50%, -50%);
+  }
+  .fan-card .card-artwork.is-ten .card-corner b {
+    font-size: 11px;
+    letter-spacing: -0.12em;
   }
   .fan-card .card-figure {
-    inset: 9px 4px 7px;
+    inset: 8px 2px 5px 16px;
+    background-position: 52% 18%;
   }
   .fan-card .card-joker {
     inset: 5px 2px;

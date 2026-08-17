@@ -41,7 +41,9 @@ export function CardArtwork({ rank, suit }: CardLike) {
   const displaySuit = joker ? "" : suit;
 
   return (
-    <span className={`card-artwork ${red ? "is-red" : "is-black"}`}>
+    <span
+      className={`card-artwork ${red ? "is-red" : "is-black"} ${rank === "10" ? "is-ten" : ""}`}
+    >
       <span className="card-corner card-corner-top" aria-hidden="true">
         <b>{displayRank}</b>
         {displaySuit && <i>{displaySuit}</i>}
@@ -72,4 +74,3 @@ export function CardArtwork({ rank, suit }: CardLike) {
     </span>
   );
 }
-
