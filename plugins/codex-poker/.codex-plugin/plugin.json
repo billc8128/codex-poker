@@ -1,0 +1,19 @@
+{
+  "name": "codex-poker",
+  "version": "0.1.0",
+  "description": "Open a local Codex Poker table and play four virtual-point card games.",
+  "author": {
+    "name": "Local developer"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Codex Poker",
+    "shortDescription": "Play four poker tables against AI.",
+    "longDescription": "Opens the Codex Poker lobby or a requested game: Fight the Landlord, Three Card Brag, Texas Hold’em, or Blackjack. Uses virtual Mtok points only.",
+    "developerName": "Local developer",
+    "category": "Lifestyle",
+    "capabilities": ["Interactive"],
+    "defaultPrompt": ["Open the Codex Poker lobby.", "Start a Blackjack table.", "Start a Texas Hold’em table."]
+  },
+  "mcpServers": "./.mcp.json"
+}

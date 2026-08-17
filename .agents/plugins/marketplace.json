@@ -1,0 +1,12 @@
+{
+  "name": "codex-poker-local",
+  "interface": { "displayName": "Codex Poker Local" },
+  "plugins": [
+    {
+      "name": "codex-poker",
+      "source": { "source": "local", "path": "./plugins/codex-poker" },
+      "policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+      "category": "Lifestyle"
+    }
+  ]
+}

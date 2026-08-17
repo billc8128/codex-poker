@@ -1,0 +1,267 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-17T12:42:29Z",
+  "title": "Design System: Codex Poker",
+  "extensions": {
+    "colorMeta": {
+      "ink": {
+        "role": "neutral",
+        "displayName": "Codex Ink",
+        "canonical": "#121212",
+        "tonalRamp": ["oklch(15% 0 0)", "oklch(26% 0 0)", "oklch(38% 0 0)", "oklch(50% 0 0)", "oklch(62% 0 0)", "oklch(74% 0 0)", "oklch(86% 0 0)", "oklch(95% 0 0)"]
+      },
+      "paper": {
+        "role": "primary",
+        "displayName": "Codex Paper",
+        "canonical": "#f2f2ef",
+        "tonalRamp": ["oklch(15% 0.004 107)", "oklch(26% 0.004 107)", "oklch(38% 0.004 107)", "oklch(50% 0.004 107)", "oklch(62% 0.004 107)", "oklch(74% 0.004 107)", "oklch(86% 0.004 107)", "oklch(95% 0.004 107)"]
+      },
+      "paper-action": {
+        "role": "neutral",
+        "displayName": "Paper Action",
+        "canonical": "#f4f4ef",
+        "tonalRamp": ["oklch(15% 0.006 107)", "oklch(26% 0.006 107)", "oklch(38% 0.006 107)", "oklch(50% 0.006 107)", "oklch(62% 0.006 107)", "oklch(74% 0.006 107)", "oklch(86% 0.006 107)", "oklch(95% 0.006 107)"]
+      },
+      "guide-paper": {
+        "role": "neutral",
+        "displayName": "Guide Paper",
+        "canonical": "#f5f5f2",
+        "tonalRamp": ["oklch(15% 0.004 107)", "oklch(26% 0.004 107)", "oklch(38% 0.004 107)", "oklch(50% 0.004 107)", "oklch(62% 0.004 107)", "oklch(74% 0.004 107)", "oklch(86% 0.004 107)", "oklch(95% 0.004 107)"]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "#d3d3ce",
+        "tonalRamp": ["oklch(15% 0.006 107)", "oklch(26% 0.006 107)", "oklch(38% 0.006 107)", "oklch(50% 0.006 107)", "oklch(62% 0.006 107)", "oklch(74% 0.006 107)", "oklch(86% 0.006 107)", "oklch(95% 0.006 107)"]
+      },
+      "table-ink": {
+        "role": "primary",
+        "displayName": "Deep Table Ink",
+        "canonical": "#17243f",
+        "tonalRamp": ["oklch(15% 0.051 262)", "oklch(26% 0.051 262)", "oklch(38% 0.051 262)", "oklch(50% 0.051 262)", "oklch(62% 0.051 262)", "oklch(74% 0.051 262)", "oklch(86% 0.051 262)", "oklch(95% 0.051 262)"]
+      },
+      "table-ink-translucent": {
+        "role": "primary",
+        "displayName": "Translucent Table Ink",
+        "canonical": "#17243fcc",
+        "tonalRamp": ["oklch(15% 0.051 262 / 0.8)", "oklch(26% 0.051 262 / 0.8)", "oklch(38% 0.051 262 / 0.8)", "oklch(50% 0.051 262 / 0.8)", "oklch(62% 0.051 262 / 0.8)", "oklch(74% 0.051 262 / 0.8)", "oklch(86% 0.051 262 / 0.8)", "oklch(95% 0.051 262 / 0.8)"]
+      },
+      "table-ink-hover": {
+        "role": "primary",
+        "displayName": "Raised Table Ink",
+        "canonical": "#263654",
+        "tonalRamp": ["oklch(15% 0.054 260)", "oklch(26% 0.054 260)", "oklch(38% 0.054 260)", "oklch(50% 0.054 260)", "oklch(62% 0.054 260)", "oklch(74% 0.054 260)", "oklch(86% 0.054 260)", "oklch(95% 0.054 260)"]
+      },
+      "table-label": {
+        "role": "secondary",
+        "displayName": "Quiet Table Slate",
+        "canonical": "#aeb9cc",
+        "tonalRamp": ["oklch(15% 0.026 258)", "oklch(26% 0.026 258)", "oklch(38% 0.026 258)", "oklch(50% 0.026 258)", "oklch(62% 0.026 258)", "oklch(74% 0.026 258)", "oklch(86% 0.026 258)", "oklch(95% 0.026 258)"]
+      },
+      "table-label-strong": {
+        "role": "secondary",
+        "displayName": "Strong Table Slate",
+        "canonical": "#c4cddd",
+        "tonalRamp": ["oklch(15% 0.022 258)", "oklch(26% 0.022 258)", "oklch(38% 0.022 258)", "oklch(50% 0.022 258)", "oklch(62% 0.022 258)", "oklch(74% 0.022 258)", "oklch(86% 0.022 258)", "oklch(95% 0.022 258)"]
+      },
+      "card-face": {
+        "role": "secondary",
+        "displayName": "Card Ivory",
+        "canonical": "#f9f9f5",
+        "tonalRamp": ["oklch(15% 0.005 107)", "oklch(26% 0.005 107)", "oklch(38% 0.005 107)", "oklch(50% 0.005 107)", "oklch(62% 0.005 107)", "oklch(74% 0.005 107)", "oklch(86% 0.005 107)", "oklch(95% 0.005 107)"]
+      },
+      "card-ink": {
+        "role": "neutral",
+        "displayName": "Card Ink",
+        "canonical": "#171717",
+        "tonalRamp": ["oklch(15% 0 0)", "oklch(26% 0 0)", "oklch(38% 0 0)", "oklch(50% 0 0)", "oklch(62% 0 0)", "oklch(74% 0 0)", "oklch(86% 0 0)", "oklch(95% 0 0)"]
+      },
+      "suit-red": {
+        "role": "tertiary",
+        "displayName": "Suit Vermilion",
+        "canonical": "#c43c36",
+        "tonalRamp": ["oklch(15% 0.174 27)", "oklch(26% 0.174 27)", "oklch(38% 0.174 27)", "oklch(50% 0.174 27)", "oklch(62% 0.174 27)", "oklch(74% 0.174 27)", "oklch(86% 0.174 27)", "oklch(95% 0.174 27)"]
+      },
+      "action-amber": {
+        "role": "tertiary",
+        "displayName": "Action Amber",
+        "canonical": "#f2c94c",
+        "tonalRamp": ["oklch(15% 0.146 91)", "oklch(26% 0.146 91)", "oklch(38% 0.146 91)", "oklch(50% 0.146 91)", "oklch(62% 0.146 91)", "oklch(74% 0.146 91)", "oklch(86% 0.146 91)", "oklch(95% 0.146 91)"]
+      },
+      "white": {
+        "role": "neutral",
+        "displayName": "Pure White",
+        "canonical": "#ffffff",
+        "tonalRamp": ["oklch(15% 0 0)", "oklch(26% 0 0)", "oklch(38% 0 0)", "oklch(50% 0 0)", "oklch(62% 0 0)", "oklch(74% 0 0)", "oklch(86% 0 0)", "oklch(95% 0 0)"]
+      }
+    },
+    "typographyMeta": {
+      "headline": { "displayName": "Open Table Headline", "purpose": "The fresh-trick prompt at the center anchor." },
+      "title": { "displayName": "Winning Play Title", "purpose": "The current combination and primary table state." },
+      "body": { "displayName": "Instruction Body", "purpose": "Rules-guide explanation and longer instruction." },
+      "label": { "displayName": "Table Label", "purpose": "Seat roles, counts, utility metadata, and attribution." },
+      "control": { "displayName": "Control Label", "purpose": "Utility navigation and action pills." },
+      "card-rank": { "displayName": "Card Rank", "purpose": "The fastest-reading identity inside face-up cards." }
+    },
+    "shadows": [
+      { "name": "table-float", "value": "inset 0 0 0 1px #ffffff18, 0 22px 50px #1118271c", "purpose": "Separate the continuous field from the paper shell." },
+      { "name": "seat-throw", "value": "0 6px 16px #07102a52", "purpose": "Keep compact latest-play cards distinct from the field." },
+      { "name": "winning-play", "value": "0 12px 28px #07102a66", "purpose": "Give the current target more physical authority than seat history." },
+      { "name": "fan-card", "value": "0 10px 22px #07102a66", "purpose": "Separate the overlapping interactive hand." },
+      { "name": "selected-fan-card", "value": "0 16px 30px #07102a80", "purpose": "Support the selected lift and amber outline." },
+      { "name": "rules-guide", "value": "0 24px 80px #0006", "purpose": "Lift the only blocking paper layer over its backdrop." }
+    ],
+    "motion": [
+      { "name": "throw-to-table", "value": "420ms cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "Carry the newly leading cards from the acting seat toward the central winning anchor." },
+      { "name": "throw-from-left", "value": "translate(-28vw, -18vh) scale(0.82) rotate(-7deg)", "purpose": "Source the central play from AI 1." },
+      { "name": "throw-from-right", "value": "translate(28vw, -18vh) scale(0.82) rotate(-7deg)", "purpose": "Source the central play from AI 2." },
+      { "name": "throw-from-hero", "value": "translate(0, 18vh) scale(0.82) rotate(-7deg)", "purpose": "Source the central play from the hero hand." },
+      { "name": "thinking-in", "value": "150ms ease-out", "purpose": "Acknowledge the next AI thinker with one short scale-and-fade entrance at 20% of the table height." },
+      { "name": "ai-turn-delay", "value": "900ms", "purpose": "Leave each completed action visible before advancing exactly one AI action." },
+      { "name": "fan-interaction", "value": "180ms cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "Lift focused and selected cards without disturbing the desktop fan or mobile grid." },
+      { "name": "reduced-motion", "value": "animation: none; transition: none", "purpose": "Preserve final table state without card travel, hand lift transitions, or thinking-badge entrance motion." }
+    ],
+    "breakpoints": [
+      { "name": "table-mobile", "value": "max-width: 700px" },
+      { "name": "hand-compact-grid", "value": "max-width: 479px; 8 columns × 3 rows" },
+      { "name": "hand-wide-grid", "value": "min-width: 480px and max-width: 700px; 10 columns × 2 rows" },
+      { "name": "table-compact-height", "value": "max-height: 680px and min-width: 701px" },
+      { "name": "table-tall-stage", "value": "min-height: 1000px and min-width: 701px" },
+      { "name": "tall-active-stage", "value": "980px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Table Utility Navigation",
+      "kind": "nav",
+      "refersTo": "table-navigation",
+      "description": "Minimal paper chrome for lobby return, game status, and balance.",
+      "html": "<nav class=\"ds-table-nav\"><a href=\"#\">← 大厅</a><div><span class=\"ds-live-dot\"></span> 斗地主 · 单人</div><div>10,000 <small>Mtok</small></div></nav>",
+      "css": ".ds-table-nav{height:52px;border-bottom:1px solid #d3d3ce;display:grid;grid-template-columns:1fr 1fr 1fr;align-items:center;background:#f2f2ef;color:#121212;font:600 11px var(--font-mono),monospace;letter-spacing:.06em;text-transform:uppercase}.ds-table-nav a{color:inherit;text-decoration:none}.ds-table-nav>div:nth-child(2){text-align:center}.ds-table-nav>div:last-child{text-align:right}.ds-table-nav small{color:#60605c}.ds-live-dot{display:inline-block;width:6px;height:6px;margin-right:7px;border-radius:50%;background:#17243f}@media(max-width:700px){.ds-table-nav{height:48px;grid-template-columns:1fr auto}.ds-table-nav>div:nth-child(2){display:none}}"
+    },
+    {
+      "name": "Uninterrupted Table Field",
+      "kind": "custom",
+      "refersTo": "table-field",
+      "description": "The single deep-ink stage; a top-20% thinking badge preserves the completed action while naming the next AI thinker without overlapping the winning cards.",
+      "html": "<section class=\"ds-table-field\"><span class=\"ds-inscription\">第 1 局 <b>×1</b></span><span class=\"ds-thinking\">AI 1 过牌 · AI 2 思考中…</span><span class=\"ds-field-note\">THREE-SEAT TABLE</span></section>",
+      "css": ".ds-table-field{position:relative;width:100%;height:300px;overflow:hidden;border-radius:36px;background:#17243f;color:#fff;box-shadow:inset 0 0 0 1px #ffffff18,0 22px 50px #1118271c}.ds-table-field:before{content:'';position:absolute;inset:10px;border:1px solid #ffffff14;border-radius:28px}.ds-inscription{position:absolute;top:22px;left:50%;transform:translateX(-50%);color:#8f9bb1;font:600 10px var(--font-mono),monospace}.ds-inscription b{margin-left:10px;color:#f2c94c}.ds-thinking{position:absolute;top:20%;left:50%;z-index:8;padding:7px 12px;border-radius:999px;background:#f2c94c;color:#171717;font:700 10px var(--font-mono),monospace;transform:translateX(-50%);animation:ds-thinking-in 150ms ease-out both}.ds-field-note{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);color:#aeb9cc;font:600 10px var(--font-mono),monospace;letter-spacing:.08em}@keyframes ds-thinking-in{from{opacity:0;transform:translateX(-50%) scale(.96)}to{opacity:1;transform:translateX(-50%) scale(1)}}@media(max-width:700px){.ds-table-field{border-radius:24px}.ds-table-field:before{inset:7px;border-radius:18px}}@media(prefers-reduced-motion:reduce){.ds-thinking{animation:none}}"
+    },
+    {
+      "name": "Floating Opponent Seat",
+      "kind": "custom",
+      "description": "Seat identity, role, turn state, and hidden-card count without a surrounding panel.",
+      "html": "<section class=\"ds-seat ds-is-turn\"><div class=\"ds-seat-name\"><span class=\"ds-player-token\">AI 1</span><p><strong>农民</strong></p></div><div class=\"ds-count\"><span class=\"ds-backs\"><i></i><i></i><i></i><i></i></span><strong>17</strong></div></section>",
+      "css": ".ds-seat{position:relative;width:210px;min-height:74px;background:#17243f;color:#fff}.ds-seat-name{display:flex;align-items:center;gap:10px}.ds-seat-name p{margin:0}.ds-seat-name strong{font:650 13px var(--font-sans),sans-serif}.ds-player-token{min-width:42px;height:42px;padding:0 9px;display:grid;place-items:center;border:1px solid #ffffff42;border-radius:999px;background:#ffffff0d;font:700 11px var(--font-mono),monospace}.ds-is-turn .ds-player-token{border-color:#f2c94c;box-shadow:0 0 0 4px #f2c94c24}.ds-count{position:absolute;top:1px;left:126px;display:grid;grid-template-columns:44px auto;align-items:center;gap:5px}.ds-count>strong{font:650 19px var(--font-mono),monospace}.ds-backs{position:relative;width:42px;height:38px;transform:scale(.9);transform-origin:left center}.ds-backs i{position:absolute;top:0;width:28px;height:38px;border:1px solid #b9bdba;border-radius:4px;background:repeating-linear-gradient(45deg,#ecece7,#ecece7 3px,#d4d7d5 3px,#d4d7d5 5px);box-shadow:0 3px 8px #07102a55}.ds-backs i:nth-child(2){left:6px}.ds-backs i:nth-child(3){left:12px}.ds-backs i:nth-child(4){left:18px}"
+    },
+    {
+      "name": "Seat-Anchored Latest Action",
+      "kind": "custom",
+      "description": "The actor's latest play or high-contrast pass stays visible beneath the seat before the next AI action advances.",
+      "html": "<div class=\"ds-seat-action\"><span class=\"ds-pass-word\">过牌</span></div>",
+      "css": ".ds-seat-action{min-height:66px;padding:8px 12px;display:flex;align-items:center;background:#17243f}.ds-pass-word{padding:7px 12px;border:1px solid #ffffff55;border-radius:999px;background:#ffffff0d;color:#fff;font:650 11px var(--font-mono),monospace}"
+    },
+    {
+      "name": "Central Winning Play",
+      "kind": "custom",
+      "refersTo": "winning-card",
+      "description": "The enlarged current target with actor, role, combination, and multiplier; its render identity is the target player plus card IDs, so a pass never remounts or replays the previous throw.",
+      "html": "<section class=\"ds-winner\"><span>AI 1 · 农民</span><div class=\"ds-winning-cards\"><i class=\"ds-winning-card ds-red\"><b>Q</b><em>♥</em></i><i class=\"ds-winning-card\"><b>Q</b><em>♠</em></i></div><strong>对子 <small>×1</small></strong></section>",
+      "css": ".ds-winner{min-width:220px;padding:20px;display:flex;flex-direction:column;align-items:center;gap:8px;background:#17243f;color:#fff;text-align:center}.ds-winner>span{color:#c4cddd;font:600 10px var(--font-mono),monospace}.ds-winning-cards{display:flex;justify-content:center;gap:6px;animation:ds-throw 420ms cubic-bezier(.16,1,.3,1) both}.ds-winning-card{position:relative;width:68px;height:94px;border-radius:8px;background:#f9f9f5;color:#171717;box-shadow:0 12px 28px #07102a66;font-style:normal}.ds-winning-card b{position:absolute;top:7px;left:8px;font:750 18px var(--font-sans),sans-serif}.ds-winning-card em{position:absolute;right:8px;bottom:7px;font:normal 30px var(--font-sans),sans-serif}.ds-winning-card.ds-red{color:#c43c36}.ds-winner>strong{font:650 14px var(--font-sans),sans-serif}.ds-winner>strong small{margin-left:7px;color:#f2c94c;font:650 10px var(--font-mono),monospace}@keyframes ds-throw{from{opacity:.45;filter:blur(3px);transform:translate(-28vw,-18vh) scale(.82) rotate(-7deg)}to{opacity:1;filter:blur(0);transform:none}}@media(prefers-reduced-motion:reduce){.ds-winning-cards{animation:none}}"
+    },
+    {
+      "name": "Selectable Fan Card",
+      "kind": "custom",
+      "refersTo": "playing-card",
+      "description": "The playable Dou Dizhu hand is one captured pointer surface: primary-pointer down freezes card centers, targets the nearest card immediately, and applies an inclusive index sweep against the immutable pre-drag selection across the desktop fan or mobile rows. Visual cards ignore pointer hit-testing while their native buttons retain focus, keyboard activation, and aria-pressed state; AI, bidding, and terminal hands expose no pointer affordance.",
+      "html": "<div class=\"ds-fan ds-drag-select\" aria-label=\"你的手牌，可点击或拖动连续选择\"><button class=\"ds-fan-card\" aria-pressed=\"false\" aria-label=\"梅花 3\"><span><b>3</b><i>♣</i></span><em>♣</em></button><button class=\"ds-fan-card ds-red\" aria-pressed=\"false\" aria-label=\"方片 4\"><span><b>4</b><i>♦</i></span><em>♦</em></button><button class=\"ds-fan-card\" aria-pressed=\"false\" aria-label=\"黑桃 5\"><span><b>5</b><i>♠</i></span><em>♠</em></button><button class=\"ds-fan-card ds-red\" aria-pressed=\"false\" aria-label=\"红桃 6\"><span><b>6</b><i>♥</i></span><em>♥</em></button><button class=\"ds-fan-card\" aria-pressed=\"false\" aria-label=\"梅花 7\"><span><b>7</b><i>♣</i></span><em>♣</em></button><button class=\"ds-fan-card ds-red\" aria-pressed=\"false\" aria-label=\"方片 8\"><span><b>8</b><i>♦</i></span><em>♦</em></button><button class=\"ds-fan-card\" aria-pressed=\"false\" aria-label=\"黑桃 9\"><span><b>9</b><i>♠</i></span><em>♠</em></button><button class=\"ds-fan-card ds-red\" aria-pressed=\"false\" aria-label=\"红桃 10\"><span><b>10</b><i>♥</i></span><em>♥</em></button><button class=\"ds-fan-card\" aria-pressed=\"false\" aria-label=\"梅花 J\"><span><b>J</b><i>♣</i></span><em>♣</em></button><button class=\"ds-fan-card ds-selected ds-red\" aria-pressed=\"true\" aria-label=\"红桃 Q\"><span><b>Q</b><i>♥</i></span><em>♥</em></button><button class=\"ds-fan-card\" aria-pressed=\"false\" aria-label=\"黑桃 K\"><span><b>K</b><i>♠</i></span><em>♠</em></button><button class=\"ds-fan-card ds-red\" aria-pressed=\"false\" aria-label=\"方片 A\"><span><b>A</b><i>♦</i></span><em>♦</em></button><button class=\"ds-fan-card\" aria-pressed=\"false\" aria-label=\"梅花 2\"><span><b>2</b><i>♣</i></span><em>♣</em></button><button class=\"ds-fan-card ds-red\" aria-pressed=\"false\" aria-label=\"红桃 7\"><span><b>7</b><i>♥</i></span><em>♥</em></button><button class=\"ds-fan-card\" aria-pressed=\"false\" aria-label=\"黑桃 9\"><span><b>9</b><i>♠</i></span><em>♠</em></button><button class=\"ds-fan-card ds-red\" aria-pressed=\"false\" aria-label=\"方片 Q\"><span><b>Q</b><i>♦</i></span><em>♦</em></button><button class=\"ds-fan-card\" aria-pressed=\"false\" aria-label=\"梅花 A\"><span><b>A</b><i>♣</i></span><em>♣</em></button></div>",
+      "css": ".ds-fan{height:150px;padding:26px 34px 0;display:flex;align-items:flex-end;justify-content:center;background:#17243f}.ds-drag-select{touch-action:none;user-select:none;cursor:grab}.ds-drag-select:active{cursor:grabbing}.ds-drag-select .ds-fan-card{pointer-events:none}.ds-fan-card{position:relative;width:78px;height:110px;margin-left:-14px;border:0;border-radius:8px;background:#f9f9f5;color:#171717;box-shadow:0 10px 22px #07102a66;transform:rotate(-3deg);transform-origin:50% 115%;transition:transform 180ms cubic-bezier(.16,1,.3,1),box-shadow 180ms ease-out}.ds-fan-card:first-child{margin-left:0;transform:rotate(-6deg)}.ds-fan-card:last-child{transform:rotate(2deg)}.ds-fan-card:focus-visible{z-index:4;transform:translateY(-14px);outline:3px solid #fff;outline-offset:2px}.ds-fan-card.ds-selected{z-index:5;transform:translateY(-24px);outline:3px solid #f2c94c;outline-offset:2px;box-shadow:0 16px 30px #07102a80}.ds-fan-card>span{position:absolute;top:7px;left:8px;display:flex;flex-direction:column}.ds-fan-card b{font:750 18px/1 var(--font-sans),sans-serif}.ds-fan-card i{margin-top:3px;font:normal 15px var(--font-sans),sans-serif}.ds-fan-card>em{position:absolute;right:8px;bottom:7px;font:normal 34px var(--font-sans),sans-serif}.ds-fan-card.ds-red{color:#c43c36}@media(max-width:479px){.ds-fan{height:200px;padding:8px 10px 4px;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));grid-template-rows:repeat(3,62px);align-items:end;overflow:visible}.ds-fan-card,.ds-fan-card:first-child,.ds-fan-card:last-child{width:44px;height:60px;margin:0;justify-self:center;transform:none}.ds-fan-card:focus-visible{transform:translateY(-6px)}.ds-fan-card.ds-selected{transform:translateY(-8px);outline:2px solid #f2c94c;outline-offset:2px}}@media(min-width:480px) and (max-width:700px){.ds-fan{height:142px;padding:8px 10px 4px;display:grid;grid-template-columns:repeat(10,minmax(0,1fr));grid-template-rows:repeat(2,64px);align-items:end;overflow:visible}.ds-fan-card,.ds-fan-card:first-child,.ds-fan-card:last-child{width:48px;height:66px;margin:0;justify-self:center;transform:none}.ds-fan-card:focus-visible{transform:translateY(-6px)}.ds-fan-card.ds-selected{transform:translateY(-8px);outline:2px solid #f2c94c;outline-offset:2px}}@media(prefers-reduced-motion:reduce){.ds-fan-card{transition:none}}"
+    },
+    {
+      "name": "Bidding Review Hand",
+      "kind": "custom",
+      "description": "The Dou Dizhu bidding state keeps all 17 player cards face-up and view-only, reusing the same 8-column or 10-column mobile grid while the three kitty cards remain patterned backs.",
+      "html": "<section class=\"ds-bidding\"><span class=\"ds-bid-turn\">轮到你竞叫</span><div class=\"ds-kitty\" aria-label=\"3 张底牌\"><i></i><i></i><i></i></div><div class=\"ds-bid-history\"><span><b>AI 1</b>叫 1 分</span><span><b>AI 2</b>不叫</span></div><strong>你的 17 张手牌 · 看牌后决定是否叫分</strong><div class=\"ds-bidding-fan\" aria-label=\"你的 17 张手牌\"><button disabled><b>3</b><i>♣</i></button><button class=\"ds-red\" disabled><b>4</b><i>♦</i></button><button disabled><b>5</b><i>♠</i></button><button class=\"ds-red\" disabled><b>6</b><i>♥</i></button><button disabled><b>7</b><i>♣</i></button><button class=\"ds-red\" disabled><b>8</b><i>♦</i></button><button disabled><b>9</b><i>♠</i></button><button class=\"ds-red\" disabled><b>10</b><i>♥</i></button><button disabled><b>J</b><i>♣</i></button><button class=\"ds-red\" disabled><b>Q</b><i>♥</i></button><button disabled><b>K</b><i>♠</i></button><button class=\"ds-red\" disabled><b>A</b><i>♦</i></button><button disabled><b>2</b><i>♣</i></button><button class=\"ds-red\" disabled><b>7</b><i>♥</i></button><button disabled><b>9</b><i>♠</i></button><button class=\"ds-red\" disabled><b>Q</b><i>♦</i></button><button disabled><b>A</b><i>♣</i></button></div></section>",
+      "css": ".ds-bidding{position:relative;min-height:330px;padding:24px 28px 90px;display:flex;flex-direction:column;align-items:center;gap:14px;border-radius:36px;background:#17243f;color:#fff}.ds-bid-turn{padding:6px 10px;border-radius:999px;background:#f2c94c;color:#171717;font:700 10px var(--font-mono),monospace}.ds-kitty{display:flex}.ds-kitty i{width:42px;height:60px;margin-left:-8px;border:1px solid #b9bdba;border-radius:6px;background:repeating-linear-gradient(45deg,#ecece7,#ecece7 3px,#d4d7d5 3px,#d4d7d5 5px);box-shadow:0 5px 11px #07102a4d}.ds-kitty i:first-child{margin-left:0}.ds-bid-history{display:flex;gap:7px}.ds-bid-history span{padding:6px 9px;border:1px solid #ffffff2e;border-radius:999px;color:#dbe2ef;font:600 10px var(--font-mono),monospace}.ds-bid-history b{margin-right:6px;color:#fff}.ds-bidding>strong{color:#d6deeb;font:600 10px var(--font-mono),monospace}.ds-bidding-fan{position:absolute;right:14%;bottom:90px;left:4%;height:110px;display:flex;align-items:flex-end;justify-content:center}.ds-bidding-fan button{position:relative;width:78px;height:110px;margin-left:-14px;border:0;border-radius:8px;background:#f9f9f5;color:#171717;box-shadow:0 10px 22px #07102a66;cursor:default;opacity:1}.ds-bidding-fan button:first-child{margin-left:0}.ds-bidding-fan button:disabled{opacity:1}.ds-bidding-fan b{position:absolute;top:7px;left:8px;font:750 18px/1 var(--font-sans),sans-serif}.ds-bidding-fan i{position:absolute;right:8px;bottom:7px;font:normal 30px var(--font-sans),sans-serif}.ds-bidding-fan .ds-red{color:#c43c36}@media(max-width:479px){.ds-bidding{border-radius:24px;padding-right:0;padding-left:0}.ds-bidding-fan{right:0;left:0;height:200px;padding:8px 10px 4px;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));grid-template-rows:repeat(3,62px);align-items:end;overflow:visible}.ds-bidding-fan button,.ds-bidding-fan button:first-child{width:44px;height:60px;margin:0;justify-self:center}}@media(min-width:480px) and (max-width:700px){.ds-bidding{border-radius:24px;padding-right:0;padding-left:0}.ds-bidding-fan{right:0;left:0;height:142px;padding:8px 10px 4px;display:grid;grid-template-columns:repeat(10,minmax(0,1fr));grid-template-rows:repeat(2,64px);align-items:end;overflow:visible}.ds-bidding-fan button,.ds-bidding-fan button:first-child{width:48px;height:66px;margin:0;justify-self:center}}"
+    },
+    {
+      "name": "Primary Table Action",
+      "kind": "button",
+      "refersTo": "action-primary",
+      "description": "The preferred legal action, inverted to paper against the dark field and visibly disabled during AI turns until player control returns.",
+      "html": "<button class=\"ds-action-primary\">出牌</button>",
+      "css": ".ds-action-primary{min-width:92px;padding:11px 16px;border:1px solid #f4f4ef;border-radius:999px;background:#f4f4ef;color:#171717;font:600 11px var(--font-mono),monospace;text-transform:uppercase;cursor:pointer}.ds-action-primary:hover,.ds-action-primary:focus-visible{border-color:#f4f4ef;background:#f4f4ef}.ds-action-primary:focus-visible{outline:3px solid #f2c94c;outline-offset:3px}.ds-action-primary:disabled{opacity:.32;cursor:not-allowed}@media(max-width:700px){.ds-action-primary{min-width:78px;min-height:44px;padding:10px 12px}}"
+    },
+    {
+      "name": "Secondary Table Action",
+      "kind": "button",
+      "refersTo": "action-secondary",
+      "description": "A compact translucent action that remains visible but disabled during AI turns, then restores with the player turn.",
+      "html": "<button class=\"ds-action-secondary\">过牌</button>",
+      "css": ".ds-action-secondary{min-width:92px;padding:11px 16px;border:1px solid #ffffff3d;border-radius:999px;background:#17243fcc;color:#fff;backdrop-filter:blur(8px);font:600 11px var(--font-mono),monospace;text-transform:uppercase;cursor:pointer}.ds-action-secondary:hover,.ds-action-secondary:focus-visible{border-color:#fff;background:#263654}.ds-action-secondary:focus-visible{outline:3px solid #f2c94c;outline-offset:3px}.ds-action-secondary:disabled{opacity:.32;cursor:not-allowed}@media(max-width:700px){.ds-action-secondary{min-width:78px;min-height:44px;padding:10px 12px}}"
+    },
+    {
+      "name": "Rules Guide",
+      "kind": "card",
+      "refersTo": "rules-guide",
+      "description": "The only blocking paper layer; opening it pauses pending AI progression and closing it resumes the same turn with a fresh delay.",
+      "html": "<section class=\"ds-guide\"><p>FIGHT THE LANDLORD · TABLE RULES</p><h2>三人经典斗地主</h2><div class=\"ds-guide-cards\"><span>3</span><span>7</span><span>Q</span></div><p class=\"ds-guide-intro\">54 张牌、叫分定地主，支持顺子、连对、飞机、四带二、炸弹和火箭。</p><button>读完了，开始 <span>→</span></button><small>Mtok 仅为虚拟积分，不可充值、提现或兑换现金</small></section>",
+      "css": ".ds-guide{width:min(480px,100%);padding:30px;border-radius:18px;background:#f5f5f2;color:#171717;box-shadow:0 24px 80px #0006}.ds-guide>p:first-child{margin:0 0 12px;color:#60605c;font:600 10px var(--font-mono),monospace;letter-spacing:.12em}.ds-guide h2{margin:0;font:600 clamp(30px,5vw,44px)/1 var(--font-sans),sans-serif;letter-spacing:-.06em}.ds-guide-cards{display:flex;margin:24px 0}.ds-guide-cards span{width:58px;height:76px;margin-left:-7px;display:grid;place-items:center;border:1px solid #bbb;border-radius:6px;background:#fff;font:700 18px var(--font-mono),monospace;transform:rotate(-4deg)}.ds-guide-cards span:first-child{margin-left:0}.ds-guide-cards span:nth-child(2){transform:translateY(-5px)}.ds-guide-cards span:nth-child(3){transform:rotate(4deg)}.ds-guide-intro{margin:0 0 18px;color:#555;font:400 14px/1.55 var(--font-sans),sans-serif}.ds-guide>button{width:100%;display:flex;justify-content:space-between;padding:14px 16px;border:0;border-radius:999px;background:#171717;color:#fff;cursor:pointer;font:600 12px var(--font-mono),monospace}.ds-guide>button:focus-visible{outline:3px solid #17243f;outline-offset:3px}.ds-guide>small{display:block;margin-top:12px;color:#60605c;text-align:center;font:550 10px var(--font-mono),monospace}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Table Is the Interface",
+    "overview": "Codex Poker opens from a quiet paper utility bar into one uninterrupted deep-ink field. The field is not a container for dashboard modules: the three-seat topology, the location of each latest play, the scale of the winning cards, and the curve of the hero hand communicate the round directly.\n\nThe world is restrained and physical. Ivory cards, black and vermilion suits, quiet seat names, and one amber signal are enough. Administrative chrome stays at the perimeter, while the cards and their movement own the center. The result should feel like a real tabletop seen through Codex—not a casino simulation and not a collection of UI panels.",
+    "keyCharacteristics": [
+      "One uninterrupted deep-ink table inside minimal paper utility chrome.",
+      "Two opponents floating across the upper corners and the hero anchored low-left.",
+      "Every seat's latest cards placed in the open field directly beside that seat.",
+      "A larger central winning play that is unmistakably the current target.",
+      "A broad desktop fan that becomes a fixed multi-row mobile grid without changing card identity.",
+      "Direct manipulation across the whole playable hand: click a card or sweep a continuous range to select or deselect it.",
+      "A face-up 17-card bidding review hand that reuses the same responsive geometry without enabling card interaction.",
+      "Amber reserved for turn, selection, focus, multiplier, and the smallest necessary attention cues.",
+      "Serialized turn feedback: the completed action appears before the next actor begins thinking.",
+      "One throw-to-table motion that explains a new leading play, with a static reduced-motion result and no replay on passes."
+    ],
+    "rules": [
+      { "name": "The Open Field Rule", "body": "The table is a single continuous color; do not insert light trays, opaque panels, or a second surface behind seat plays or the current trick.", "section": "colors" },
+      { "name": "The Amber Means Attention Rule", "body": "Amber marks turn, selection, focus, multiplier, or the hero identity. Never spend it on passive decoration.", "section": "colors" },
+      { "name": "The Cards Speak Loudest Rule", "body": "Keep table labels compact and quiet; hierarchy comes first from card scale and placement, then from type.", "section": "typography" },
+      { "name": "The Three Anchors Rule", "body": "Every responsive mode preserves opponents above, winning play at center, and hero hand below. Density may change; the causal reading order may not.", "section": "layout" },
+      { "name": "The Depth Follows Importance Rule", "body": "Seat history is shallow, the current winner is stronger, and the selectable hand is strongest. Never use elevation to turn metadata into containers.", "section": "elevation" },
+      { "name": "The One Beat Rule", "body": "Commit and show one actor's result before scheduling the next actor; never collapse multiple AI decisions into one render.", "section": "components" },
+      { "name": "The Hand Is One Hit Surface Rule", "body": "Pointer selection belongs to the playable hand container; card buttons preserve semantic keyboard interaction without competing for overlapping pointer hits.", "section": "components" }
+    ],
+    "dos": [
+      "Do preserve one uninterrupted deep-ink field from opponent seats through the hero hand.",
+      "Do keep every latest play physically anchored to its actor and keep the current winner visibly larger at center.",
+      "Do show rank and suit on every face-up card and a numeric count beside every hidden opponent hand.",
+      "Do preserve the 1280 × 800 desktop, 390 × 844 mobile, and centered 980px tall-stage compositions.",
+      "Do use the single throw-to-table motion to connect an actor to the new central winner, then render the same final state without animation under reduced motion.",
+      "Do render the player's action immediately, then show exactly one AI action after each 900ms thinking beat.",
+      "Do preserve the completed action in visible and assistive status while naming the next thinker, including explicit re-lead copy after the second pass.",
+      "Do disable hand cards and visible action buttons during AI turns, then restore control on the player's turn.",
+      "Do pause pending AI progression whenever the blocking rules guide is open and resume it only after the guide closes.",
+      "Do keep amber visible for turn, selection, keyboard focus, hero identity, and multiplier without relying on color alone.",
+      "Do keep all 17 player cards face-up throughout bidding while the three kitty cards remain patterned backs.",
+      "Do give every mobile Dou Dizhu card an independent grid column at least 44px wide, with the complete hand visible without horizontal overflow or clipping.",
+      "Do make the playable hand one captured pointer surface, select the nearest card on pointer-down, and apply an inclusive index range against the selection as it existed when the drag began.",
+      "Do preserve native card-button focus, keyboard activation, aria-pressed, and visible focus treatment while the container owns pointer hit-testing.",
+      "Do clear drag, hover, and selection state whenever game state advances or the round resets."
+    ],
+    "donts": [
+      "Don't place seat plays, the winning play, or action history inside trays, panels, cards, or inset modules.",
+      "Don't introduce casino ornament, decorative felt textures, chips, rails, or multiple competing table colors.",
+      "Don't shrink the central winner to the same scale as seat history or the mobile hand.",
+      "Don't flatten the desktop fan into a generic straight row or replace the mobile Dou Dizhu grid with an overlapping row or horizontal scroller.",
+      "Don't add a second action rail below the field or let utility chrome compete with the cards.",
+      "Don't animate multiple competing events; one causal throw is the motion signature.",
+      "Don't remount or replay the previous winning-card throw when an AI passes.",
+      "Don't batch consecutive AI decisions into one invisible state jump.",
+      "Don't make the bidding hand selectable or let it overlap the bidding controls.",
+      "Don't let overlapping or lifted card geometry change pointer targets during an active drag.",
+      "Don't show grab, hover, selection hints, or pointer handlers during AI turns, bidding, or terminal states."
+    ]
+  }
+}

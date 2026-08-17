@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS game_results (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id TEXT NOT NULL,
+  game TEXT NOT NULL,
+  delta INTEGER NOT NULL,
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+CREATE INDEX IF NOT EXISTS idx_game_results_user_id ON game_results(user_id);
