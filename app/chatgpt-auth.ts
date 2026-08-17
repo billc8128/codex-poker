@@ -1,5 +1,10 @@
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
+import {
+  pluginLaunchSecret,
+  PLUGIN_SESSION_COOKIE,
+} from "../lib/auth/plugin-runtime";
+import { verifyToken } from "../lib/auth/signed-token";
 
 export type ChatGPTUser = {
   userId: string;
@@ -12,6 +17,7 @@ export type PokerIdentity = {
   userId: string;
   displayName: string;
   authenticated: boolean;
+  source: "chatgpt" | "plugin" | "local";
 };
 
 const USER_ID_HEADER = "oai-authenticated-user-id";
@@ -52,12 +58,29 @@ export async function getPokerIdentity(): Promise<PokerIdentity | null> {
       userId: user.userId,
       displayName: user.displayName,
       authenticated: true,
+      source: "chatgpt",
     };
+  const pluginToken = (await cookies()).get(PLUGIN_SESSION_COOKIE)?.value;
+  if (pluginToken) {
+    const plugin = await verifyToken(
+      pluginLaunchSecret(),
+      pluginToken,
+      "session",
+    );
+    if (plugin)
+      return {
+        userId: `plugin:${plugin.sub}`,
+        displayName: "Codex player",
+        authenticated: false,
+        source: "plugin",
+      };
+  }
   if (process.env.NODE_ENV !== "production")
     return {
       userId: "local-guest",
       displayName: "Local guest",
       authenticated: false,
+      source: "local",
     };
   return null;
 }

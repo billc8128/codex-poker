@@ -27,10 +27,15 @@ export default async function Home() {
         </a>
         <div className="account">
           <span className="status-dot" />
-          {identity?.authenticated ? (
+          {identity?.source === "chatgpt" ? (
             <>
               <a href="/account">{identity.displayName}</a>
               <a href="/signout-with-chatgpt?return_to=%2F">Sign out</a>
+            </>
+          ) : identity?.source === "plugin" ? (
+            <>
+              <a href="/account">{identity.displayName}</a>
+              <span>Codex plugin</span>
             </>
           ) : (
             <>

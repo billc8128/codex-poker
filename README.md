@@ -35,9 +35,9 @@ Start a new Codex task after installation, then ask “Open the Codex Poker lobb
 
 ## ChatGPT Sites
 
-The app uses the Sites Vinext plugin and logical D1 binding `DB`. The public lobby offers native Sign in with ChatGPT; production game and account routes require that identity. `app/chatgpt-auth.ts` reads the Sites-provided `oai-authenticated-user-*` headers, while local development alone may use the non-privileged guest identity.
+The app uses the Sites Vinext plugin and logical D1 binding `DB`. The public transport layer accepts signed, five-minute launch links from the Codex plugin and exchanges them for a 30-day HttpOnly session cookie. This keeps the complete plugin flow inside Codex. Ordinary web visitors without a plugin session are still redirected to native Sign in with ChatGPT before entering a table. Local development alone may use the non-privileged guest identity.
 
-Each stable Sites user ID maps to one `player_accounts` record with a 10,000 Mtok starting balance. D1 also stores an append-only game-result history. Every client settlement includes a UUID and the unique `(user_id, round_id)` index makes retries idempotent. The schema is in `db/schema.ts`; checked-in migrations are under `drizzle/`. Because gameplay runs locally in the browser and Mtok has no monetary value, this MVP treats the client result as trusted and does not provide an anti-cheat leaderboard.
+Each stable ChatGPT user ID or Codex plugin installation ID maps to one `player_accounts` record with a 10,000 Mtok starting balance. D1 also stores an append-only game-result history. Every client settlement includes a UUID and the unique `(user_id, round_id)` index makes retries idempotent. The schema is in `db/schema.ts`; checked-in migrations are under `drizzle/`. Because gameplay runs locally in the browser and Mtok has no monetary value, this MVP treats the client result as trusted and does not provide an anti-cheat leaderboard.
 
 ## Implemented table rules
 

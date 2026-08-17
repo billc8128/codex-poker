@@ -24,12 +24,26 @@ export default async function AccountPage() {
     <main className="account-shell">
       <header className="account-nav">
         <a href="/">← 牌桌大厅</a>
-        <a href="/signout-with-chatgpt?return_to=%2F">退出登录</a>
+        <a
+          href={
+            identity.source === "plugin"
+              ? "/plugin-logout"
+              : "/signout-with-chatgpt?return_to=%2F"
+          }
+        >
+          退出账户
+        </a>
       </header>
       <section className="account-summary">
         <div>
           <h1>{account.displayName}</h1>
-          <p>{identity.authenticated ? "ChatGPT 账户" : "本地游客账户"}</p>
+          <p>
+            {identity.source === "chatgpt"
+              ? "ChatGPT 账户"
+              : identity.source === "plugin"
+                ? "Codex 插件账户"
+                : "本地游客账户"}
+          </p>
         </div>
         <div className="account-balance">
           <strong>{account.balance.toLocaleString()}</strong>
