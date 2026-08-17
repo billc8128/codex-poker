@@ -67,7 +67,11 @@ const cookies = ["e2e-player-0", "e2e-player-1", "e2e-player-2"].map(
 const initialBalances = await Promise.all(
   cookies.map((cookie) => json("/api/results", cookie)),
 );
-const created = await json("/api/rooms", cookies[0], { method: "POST" });
+const created = await json("/api/rooms", cookies[0], {
+  method: "POST",
+  headers: { "content-type": "application/json" },
+  body: JSON.stringify({ gameType: "doudizhu", maxPlayers: 3 }),
+});
 assert.match(created.code, /^[A-Z2-9]{6}$/);
 const credentials = await Promise.all(
   cookies.map((cookie) => json(`/api/rooms/${created.code}/token`, cookie)),

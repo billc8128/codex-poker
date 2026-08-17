@@ -1,6 +1,6 @@
 {
   "name": "codex-poker",
-  "version": "0.3.0+codex.20260817181936",
+  "version": "0.3.0+codex.20260817184419",
   "description": "Open Codex Poker on ChatGPT Sites and play four virtual-point card games.",
   "author": {
     "name": "Codex Poker"
@@ -9,7 +9,7 @@
   "interface": {
     "displayName": "Codex Poker",
     "shortDescription": "Play four complete card tables against strategy AI.",
-    "longDescription": "Opens the deployed Codex Poker lobby, a requested solo game, or a private three-player Fight the Landlord room with invite codes and reconnect support. A signed Codex plugin session keeps each player\u2019s virtual Mtok balance and history separate without leaving Codex.",
+    "longDescription": "Opens the deployed Codex Poker lobby, a requested solo game, or mixed human/AI multiplayer rooms for all four games with invite codes and reconnect support. A signed Codex plugin session keeps each player\u2019s virtual Mtok balance and history separate without leaving Codex.",
     "developerName": "Codex Poker",
     "category": "Lifestyle",
     "capabilities": [

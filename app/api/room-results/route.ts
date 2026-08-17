@@ -13,6 +13,7 @@ export async function POST(request: Request) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   const body = (await request.json()) as {
     roomId: string;
+    gameType: "doudizhu" | "zhajinhua" | "holdem" | "blackjack";
     gameNumber: number;
     results: RoomResult[];
   };
@@ -24,7 +25,7 @@ export async function POST(request: Request) {
         userId: result.userId,
         displayName: result.displayName,
         roundId: `room-${body.roomId}-${body.gameNumber}-${result.seat}`,
-        game: "doudizhu",
+        game: body.gameType,
         delta: result.delta,
       }),
     ),

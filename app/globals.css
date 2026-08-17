@@ -1348,7 +1348,8 @@ button {
   color: #60605c;
   font: 600 10px var(--font-mono);
 }
-.rooms-actions input {
+.rooms-actions input,
+.rooms-actions select {
   width: 100%;
   border: 0;
   border-bottom: 1px solid #777;
@@ -1359,6 +1360,11 @@ button {
   letter-spacing: 0.18em;
   text-transform: uppercase;
   outline: none;
+}
+.rooms-actions select {
+  font-size: 14px;
+  letter-spacing: 0;
+  text-transform: none;
 }
 .rooms-actions button,
 .room-toolbar button,
@@ -1438,7 +1444,7 @@ button {
   right: 34px;
   left: 34px;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(var(--room-seats), 1fr);
   gap: 20px;
 }
 .room-seat {
@@ -1513,7 +1519,8 @@ button {
   color: #c4cddd;
   font: 550 10px var(--font-mono);
 }
-.room-my-hand {
+.room-my-hand,
+.room-card-row {
   position: absolute;
   right: 28px;
   bottom: 22px;
@@ -1521,7 +1528,8 @@ button {
   display: flex;
   justify-content: center;
 }
-.room-my-hand button {
+.room-my-hand button,
+.room-card-row button {
   display: flex;
   width: 58px;
   height: 82px;
@@ -1538,20 +1546,76 @@ button {
   font: 750 16px var(--font-mono);
   box-shadow: 0 8px 18px #07102a66;
 }
-.room-my-hand button:first-child {
+.room-my-hand button:first-child,
+.room-card-row button:first-child {
   margin-left: 0;
 }
-.room-my-hand button.selected {
+.room-my-hand button.selected,
+.room-card-row button.selected {
   z-index: 2;
   transform: translateY(-16px);
   outline: 3px solid #f2c94c;
   outline-offset: 2px;
 }
-.room-my-hand button:disabled {
+.room-my-hand button:disabled,
+.room-card-row button:disabled {
   cursor: default;
 }
-.room-my-hand small {
+.room-my-hand small,
+.room-card-row small {
   font-size: 15px;
+}
+.room-inline-controls {
+  position: absolute;
+  right: 24px;
+  bottom: 24px;
+  z-index: 5;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 7px;
+}
+.room-inline-controls button {
+  min-height: 38px;
+  border: 1px solid #ffffff4d;
+  border-radius: 999px;
+  background: #17243fd9;
+  color: #fff;
+  padding: 8px 13px;
+  cursor: pointer;
+  font: 600 10px var(--font-mono);
+}
+.room-inline-controls button:disabled {
+  cursor: not-allowed;
+  opacity: 0.3;
+}
+.room-board {
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.room-board .room-card-row {
+  position: static;
+  transform: none;
+}
+.room-card-backs {
+  position: absolute;
+  bottom: 110px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #fff;
+  font: 700 28px var(--font-mono);
+  letter-spacing: 0.15em;
+}
+.room-theme-zhajinhua .room-table {
+  background: #963d32;
+}
+.room-theme-holdem .room-table {
+  background: #275d46;
+}
+.room-theme-blackjack .room-table {
+  background: #292929;
 }
 .room-controls {
   display: flex;
@@ -1617,7 +1681,8 @@ button {
   .room-lobby-state strong {
     font-size: 42px;
   }
-  .room-my-hand {
+  .room-my-hand,
+  .room-card-row {
     right: 10px;
     bottom: 14px;
     left: 10px;
@@ -1625,7 +1690,8 @@ button {
     justify-content: flex-start;
     padding: 18px 8px 4px;
   }
-  .room-my-hand button {
+  .room-my-hand button,
+  .room-card-row button {
     width: 44px;
     height: 62px;
     margin-left: -17px;
@@ -1633,8 +1699,18 @@ button {
     font-size: 13px;
     padding: 5px;
   }
-  .room-my-hand small {
+  .room-my-hand small,
+  .room-card-row small {
     font-size: 12px;
+  }
+  .room-inline-controls {
+    right: 10px;
+    bottom: 82px;
+    left: 10px;
+  }
+  .room-inline-controls button {
+    min-height: 44px;
+    flex: 1;
   }
   .room-winning-cards span {
     width: 42px;

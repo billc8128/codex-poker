@@ -40,6 +40,7 @@ export type HoldemState = {
   result?: string;
   delta?: number;
   winners?: HoldemSeat[];
+  autoAi: boolean;
 };
 
 export type HoldemDecision = {
@@ -114,6 +115,8 @@ const needsAction = (s: HoldemState, seat: HoldemSeat) => {
 export function newHoldem(
   seed = 3,
   dealerSeat: HoldemSeat = asSeat(seed % 6),
+  autoAi = true,
+  playerCount = 6,
 ): HoldemState {
   const cards = deck(seed);
   const hands = seats.map((seat) => [cards[seat], cards[seat + 6]]) as Six<
@@ -126,7 +129,11 @@ export function newHoldem(
   let smallPaid: number, bigPaid: number;
   [players[smallBlind], smallPaid] = pay(players[smallBlind], 10);
   [players[bigBlind], bigPaid] = pay(players[bigBlind], 20);
-  const actor = asSeat(bigBlind + 1);
+  seats.forEach((seat) => {
+    if (seat >= playerCount) players[seat] = { ...players[seat], folded: true };
+  });
+  let actor = asSeat(bigBlind + 1);
+  while (players[actor].folded) actor = asSeat(actor + 1);
   const state: HoldemState = {
     seed,
     street: "preflop",
@@ -143,9 +150,10 @@ export function newHoldem(
     minRaise: 20,
     acted: freshBooleans(),
     actions: [],
+    autoAi,
     message: `翻牌前 · ${playerName(smallBlind)}下小盲 10，${playerName(bigBlind)}下大盲 20`,
   };
-  return runAi(state);
+  return autoAi ? runAi(state) : state;
 }
 
 export function holdemToCall(s: HoldemState, player = s.actor) {
@@ -506,8 +514,18 @@ export function actHoldem(
   action: HoldemAction,
   target?: number,
 ) {
-  if (s.actor !== 0) return s;
-  return runAi(applyAction(s, 0, action, target));
+  return actHoldemPlayer(s, 0, action, target);
+}
+
+export function actHoldemPlayer(
+  s: HoldemState,
+  player: HoldemSeat,
+  action: HoldemAction,
+  target?: number,
+) {
+  if (s.actor !== player) return s;
+  const next = applyAction(s, player, action, target);
+  return s.autoAi && player === 0 ? runAi(next) : next;
 }
 
 export const checkHoldem = (s: HoldemState) =>

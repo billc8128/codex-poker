@@ -7,8 +7,10 @@ import {
   roomSettlements,
   roomSnapshot,
   RoomCommand,
+  RoomGameId,
   RoomState,
   setRoomPlayerConnected,
+  upgradeRoomState,
 } from "../lib/multiplayer/room";
 import { verifyRoomToken } from "../lib/multiplayer/token";
 
@@ -27,13 +29,21 @@ export class GameRoom extends DurableObject<Env> {
   constructor(ctx: DurableObjectState, env: Env) {
     super(ctx, env);
     ctx.blockConcurrencyWhile(async () => {
-      this.state = (await ctx.storage.get<RoomState>("state")) ?? null;
+      const stored = await ctx.storage.get<RoomState>("state");
+      this.state = stored ? upgradeRoomState(stored) : null;
+      if (stored) await ctx.storage.put("state", this.state);
     });
   }
 
-  async init(code: string, hostId: string, hostName: string) {
+  async init(
+    code: string,
+    hostId: string,
+    hostName: string,
+    gameType: RoomGameId,
+    maxPlayers?: number,
+  ) {
     if (this.state) return;
-    this.state = createRoom(code, hostId, hostName);
+    this.state = createRoom(code, hostId, hostName, gameType, maxPlayers);
     await this.ctx.storage.put("state", this.state);
   }
 
@@ -151,6 +161,7 @@ export class GameRoom extends DurableObject<Env> {
       },
       body: JSON.stringify({
         roomId: this.state.code,
+        gameType: this.state.gameType,
         gameNumber: this.state.gameNumber,
         results: roomSettlements(this.state),
       }),
@@ -187,8 +198,19 @@ export default {
     if (action === "init") {
       if (request.headers.get("X-Room-Service-Secret") !== env.ROOM_SERVICE_SECRET)
         return new Response("Unauthorized", { status: 401, headers });
-      const body = await request.json<{ hostId: string; hostName: string }>();
-      await room.init(code, body.hostId, body.hostName);
+      const body = await request.json<{
+        hostId: string;
+        hostName: string;
+        gameType: RoomGameId;
+        maxPlayers?: number;
+      }>();
+      await room.init(
+        code,
+        body.hostId,
+        body.hostName,
+        body.gameType,
+        body.maxPlayers,
+      );
       return Response.json({ code }, { headers });
     }
     const token = url.searchParams.get("token") ?? "";

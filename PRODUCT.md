@@ -12,7 +12,7 @@ Codex and ChatGPT users who want to open a quick, understandable card game from 
 
 ## Product Purpose
 
-Codex Poker provides four rules-based solo card tables—斗地主、扎金花、六人德州扑克和 21 点—with clear legal actions, visible state changes, and complete settlement. Success means a first-time player can understand who acted, what cards matter, what they may do next, and when the round is over.
+Codex Poker provides four rules-based solo and multiplayer card tables—斗地主、扎金花、六人德州扑克和 21 点—with clear legal actions, visible state changes, AI fill, private-room invitations, reconnectable play, and complete settlement. Success means a first-time player can understand who acted, what cards matter, what they may do next, and when the round is over.
 
 ## Positioning
 

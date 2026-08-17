@@ -1,46 +1,112 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import type { DdzAction, DdzBid, DdzCard, DdzPlay } from "../../../lib/games/doudizhu";
+import type { BlackjackState } from "../../../lib/games/blackjack";
 
+type RoomGameId = "doudizhu" | "zhajinhua" | "holdem" | "blackjack";
+type Card = { id?: string; rank: string; suit: string };
 type Player = {
   id: string;
   name: string;
-  seat: 0 | 1 | 2;
+  seat: number;
   ready: boolean;
   connected: boolean;
+  isBot: boolean;
+};
+type GameSnapshot = {
+  type: RoomGameId;
+  phase: string;
+  currentPlayer: number | null;
+  message?: string;
+  winner?: number;
+  myHand?: Card[];
+  handCounts?: number[];
+  landlord?: number | null;
+  multiplier?: number;
+  highestBid?: number;
+  bids?: Array<{ player: number; bid: number }>;
+  target?: { player: number; cards: Card[] } | null;
+  kitty?: Card[];
+  round?: number;
+  pot?: number;
+  stake?: number;
+  active?: boolean[];
+  seen?: boolean[];
+  revealedHands?: Card[][] | null;
+  board?: Card[];
+  currentBet?: number;
+  minRaise?: number;
+  dealer?: number;
+  smallBlind?: number;
+  bigBlind?: number;
+  players?: Array<{
+    stack: number;
+    streetBet: number;
+    folded: boolean;
+    allIn: boolean;
+  }>;
+  winners?: number[];
+  myState?: BlackjackState | null;
+  playerStates?: Record<
+    string,
+    { phase: string; result?: string; delta?: number }
+  >;
 };
 type Snapshot = {
   code: string;
+  gameType: RoomGameId;
+  maxPlayers: number;
   phase: "lobby" | "playing" | "done";
   hostId: string;
-  me: { id: string; seat: 0 | 1 | 2 } | null;
+  me: { id: string; seat: number } | null;
   players: Player[];
   version: number;
   turnDeadline: number | null;
-  game: null | {
-    phase: "bidding" | "playing" | "done";
-    currentPlayer: 0 | 1 | 2;
-    firstBidder: 0 | 1 | 2;
-    bids: DdzBid[];
-    highestBid: number;
-    highestBidder: number | null;
-    landlord: number | null;
-    multiplier: number;
-    target: DdzPlay | null;
-    actions: DdzAction[];
-    message: string;
-    winner?: number;
-    handCounts: number[];
-    myHand: DdzCard[];
-    kitty: DdzCard[];
-  };
+  game: GameSnapshot | null;
 };
 
-const cardName = (card: DdzCard) =>
+const gameNames: Record<RoomGameId, string> = {
+  doudizhu: "斗地主",
+  zhajinhua: "扎金花",
+  holdem: "德州扑克",
+  blackjack: "21 点",
+};
+const cardName = (card: Card) =>
   card.rank === "BJ" ? "小王" : card.rank === "RJ" ? "大王" : card.rank;
 
-export function MultiplayerDoudizhu({
+function RoomCards({
+  cards,
+  selected = [],
+  disabled = true,
+  onToggle,
+}: {
+  cards: Card[];
+  selected?: string[];
+  disabled?: boolean;
+  onToggle?: (id: string) => void;
+}) {
+  return (
+    <div className="room-card-row">
+      {cards.map((card, index) => {
+        const id = card.id ?? `${card.rank}-${card.suit}-${index}`;
+        return (
+          <button
+            aria-pressed={selected.includes(id)}
+            className={selected.includes(id) ? "selected" : ""}
+            disabled={disabled}
+            key={id}
+            onClick={() => onToggle?.(id)}
+          >
+            {cardName(card)}
+            <small>{card.suit}</small>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+export function MultiplayerRoom({
   code,
   playerName,
 }: {
@@ -110,20 +176,29 @@ export function MultiplayerDoudizhu({
   const myPlayer = snapshot?.players.find((player) => player.id === me?.id);
   const isHost = snapshot?.hostId === me?.id;
   const myTurn = Boolean(
-    snapshot?.game && me && snapshot.game.currentPlayer === me.seat,
+    snapshot?.game &&
+      me &&
+      snapshot.game.currentPlayer === me.seat,
   );
   const playerAt = (seat: number) =>
     snapshot?.players.find((player) => player.seat === seat);
-  const turnName = snapshot?.game
-    ? playerAt(snapshot.game.currentPlayer)?.name ?? `座位 ${snapshot.game.currentPlayer + 1}`
-    : "";
+  const turnName =
+    snapshot?.game?.currentPlayer === null ||
+    snapshot?.game?.currentPlayer === undefined
+      ? ""
+      : playerAt(snapshot.game.currentPlayer)?.name ??
+        `座位 ${snapshot.game.currentPlayer + 1}`;
   const inviteUrl = useMemo(
-    () => (typeof window === "undefined" ? "" : `${window.location.origin}/room/${code}`),
+    () =>
+      typeof window === "undefined"
+        ? ""
+        : `${window.location.origin}/room/${code}`,
     [code],
   );
+  const minimum = snapshot?.gameType === "blackjack" ? 1 : 3;
 
   return (
-    <main className="room-shell">
+    <main className={`room-shell room-theme-${snapshot?.gameType ?? "doudizhu"}`}>
       <header className="room-nav">
         <a href="/rooms">← 多人房</a>
         <strong>房间 {code}</strong>
@@ -131,8 +206,14 @@ export function MultiplayerDoudizhu({
       </header>
       <section className="room-toolbar">
         <div>
-          <h1>三人斗地主</h1>
-          <p>{snapshot?.phase === "lobby" ? "等待玩家准备" : `轮到 ${turnName}`}</p>
+          <h1>{snapshot ? gameNames[snapshot.gameType] : "多人牌桌"}</h1>
+          <p>
+            {snapshot?.phase === "lobby"
+              ? `等待玩家准备 · ${snapshot.players.length}/${snapshot.maxPlayers}`
+              : turnName
+                ? `轮到 ${turnName}`
+                : "各自行动"}
+          </p>
         </div>
         <button
           onClick={async () => {
@@ -144,8 +225,11 @@ export function MultiplayerDoudizhu({
         </button>
       </section>
       <section className="room-table">
-        <div className="room-seats">
-          {[0, 1, 2].map((seat) => {
+        <div
+          className="room-seats"
+          style={{ "--room-seats": snapshot?.maxPlayers ?? 3 } as React.CSSProperties}
+        >
+          {Array.from({ length: snapshot?.maxPlayers ?? 3 }, (_, seat) => {
             const player = playerAt(seat);
             return (
               <div
@@ -155,71 +239,40 @@ export function MultiplayerDoudizhu({
                 <b>{player?.name ?? "等待加入"}</b>
                 <span>
                   {player
-                    ? `${player.connected ? "在线" : "断线"} · ${player.ready ? "已准备" : "未准备"}`
+                    ? `${player.isBot ? "AI" : player.connected ? "在线" : "断线"} · ${player.ready ? "已准备" : "未准备"}`
                     : `座位 ${seat + 1}`}
                 </span>
-                {snapshot?.game && (
-                  <strong>
-                    {snapshot.game.landlord === seat ? "地主" : "农民"} · {snapshot.game.handCounts[seat]} 张
-                  </strong>
-                )}
+                {snapshot?.game && <SeatGameState snapshot={snapshot} seat={seat} />}
               </div>
             );
           })}
         </div>
 
-        {snapshot?.phase === "lobby" && (
+        {!snapshot ? (
           <div className="room-lobby-state">
-            <strong>{snapshot.players.length} / 3</strong>
-            <span>三名玩家准备后由房主开始</span>
+            <strong>···</strong>
+            <span>正在连接房间</span>
           </div>
-        )}
-
-        {snapshot?.game && (
-          <>
-            <div className="room-game-meta">
-              <span>×{snapshot.game.multiplier}</span>
-              <strong>
-                {snapshot.game.phase === "bidding"
-                  ? `当前叫分 ${snapshot.game.highestBid}`
-                  : snapshot.game.target
-                    ? `${playerAt(snapshot.game.target.player)?.name ?? "玩家"} 的牌`
-                    : "新一墩"}
-              </strong>
-            </div>
-            <div className="room-winning-cards">
-              {snapshot.game.target?.cards.map((card) => (
-                <span key={card.id}>{cardName(card)}</span>
-              ))}
-            </div>
-            <div className="room-bid-history">
-              {snapshot.game.bids.map((bid, index) => (
-                <span key={`${bid.player}-${index}`}>
-                  {playerAt(bid.player)?.name}：{bid.bid ? `${bid.bid} 分` : "不叫"}
-                </span>
-              ))}
-            </div>
-            <div className="room-my-hand" aria-label="我的手牌">
-              {snapshot.game.myHand.map((card) => (
-                <button
-                  aria-pressed={selected.includes(card.id)}
-                  className={selected.includes(card.id) ? "selected" : ""}
-                  disabled={!myTurn || snapshot.game?.phase !== "playing"}
-                  key={card.id}
-                  onClick={() =>
-                    setSelected((current) =>
-                      current.includes(card.id)
-                        ? current.filter((id) => id !== card.id)
-                        : [...current, card.id],
-                    )
-                  }
-                >
-                  {cardName(card)}
-                  <small>{card.suit}</small>
-                </button>
-              ))}
-            </div>
-          </>
+        ) : snapshot.phase === "lobby" ? (
+          <div className="room-lobby-state">
+            <strong>{snapshot.players.length} / {snapshot.maxPlayers}</strong>
+            <span>邀请朋友，或由房主用 AI 补齐空位</span>
+          </div>
+        ) : (
+          <RoomGameTable
+            myTurn={myTurn}
+            onToggle={(id) =>
+              setSelected((current) =>
+                current.includes(id)
+                  ? current.filter((value) => value !== id)
+                  : [...current, id],
+              )
+            }
+            playerAt={playerAt}
+            selected={selected}
+            send={send}
+            snapshot={snapshot}
+          />
         )}
       </section>
       <section className="room-controls">
@@ -229,51 +282,154 @@ export function MultiplayerDoudizhu({
           </button>
         )}
         {snapshot?.phase === "lobby" && isHost && (
-          <button
-            className="primary"
-            disabled={snapshot.players.length !== 3 || snapshot.players.some((player) => !player.ready)}
-            onClick={() => send({ type: "start", seed: crypto.getRandomValues(new Uint32Array(1))[0] })}
-          >
-            开始游戏
-          </button>
-        )}
-        {snapshot?.game?.phase === "bidding" && myTurn &&
-          [0, 1, 2, 3].map((bid) => (
-            <button
-              disabled={bid > 0 && bid <= snapshot.game!.highestBid}
-              key={bid}
-              onClick={() => send({ type: "bid", bid })}
-            >
-              {bid ? `叫 ${bid} 分` : "不叫"}
-            </button>
-          ))}
-        {snapshot?.game?.phase === "playing" && myTurn && (
           <>
-            <button
-              disabled={!snapshot.game.target}
-              onClick={() => send({ type: "pass" })}
-            >
-              过牌
-            </button>
+            <button onClick={() => send({ type: "remove-bots" })}>移除 AI</button>
+            <button onClick={() => send({ type: "fill-bots" })}>AI 补齐</button>
             <button
               className="primary"
-              disabled={!selected.length}
-              onClick={() => send({ type: "play", cardIds: selected })}
+              disabled={
+                snapshot.players.length < minimum ||
+                snapshot.players.some((player) => !player.ready)
+              }
+              onClick={() =>
+                send({
+                  type: "start",
+                  seed: crypto.getRandomValues(new Uint32Array(1))[0],
+                })
+              }
             >
-              出牌
+              开始游戏
             </button>
           </>
         )}
-        {snapshot?.phase === "done" && (
-          <strong>
-            {playerAt(snapshot.game?.winner ?? -1)?.name ?? "玩家"} 获胜
-          </strong>
-        )}
+        {snapshot?.phase === "done" && <strong>本局已结算</strong>}
       </section>
       {error && <p className="room-error">{error}</p>}
       <small className="room-footnote">
-        断线后座位会保留；每回合 45 秒，超时自动不叫、过牌或出最小单张。
+        AI 和真人遵守同一服务端状态机；断线保留座位，每回合 45 秒自动托管。
       </small>
     </main>
+  );
+}
+
+function SeatGameState({ snapshot, seat }: { snapshot: Snapshot; seat: number }) {
+  const game = snapshot.game;
+  if (!game) return null;
+  if (game.type === "doudizhu")
+    return <strong>{game.landlord === seat ? "地主" : "农民"} · {game.handCounts?.[seat]} 张</strong>;
+  if (game.type === "zhajinhua")
+    return <strong>{game.active?.[seat] ? "在局" : "弃牌"}</strong>;
+  if (game.type === "holdem")
+    return <strong>{game.players?.[seat]?.stack ?? 0} Mtok</strong>;
+  return <strong>{game.playerStates?.[seat]?.phase === "done" ? "已结算" : "进行中"}</strong>;
+}
+
+function RoomGameTable({
+  snapshot,
+  selected,
+  myTurn,
+  send,
+  onToggle,
+  playerAt,
+}: {
+  snapshot: Snapshot;
+  selected: string[];
+  myTurn: boolean;
+  send: (message: object) => void;
+  onToggle: (id: string) => void;
+  playerAt: (seat: number) => Player | undefined;
+}) {
+  const game = snapshot.game!;
+  const seat = snapshot.me?.seat ?? 0;
+  if (game.type === "doudizhu")
+    return (
+      <>
+        <div className="room-game-meta">
+          <span>×{game.multiplier}</span>
+          <strong>{game.phase === "bidding" ? `当前叫分 ${game.highestBid}` : game.target ? `${playerAt(game.target.player)?.name} 的牌` : "新一墩"}</strong>
+        </div>
+        <div className="room-winning-cards">
+          {game.target?.cards.map((card, index) => (
+            <span key={card.id ?? index}>{cardName(card)}</span>
+          ))}
+        </div>
+        <RoomCards cards={game.myHand ?? []} disabled={!myTurn || game.phase !== "playing"} onToggle={onToggle} selected={selected} />
+        <div className="room-inline-controls">
+          {game.phase === "bidding" && myTurn &&
+            [0, 1, 2, 3].map((bid) => (
+              <button disabled={bid > 0 && bid <= (game.highestBid ?? 0)} key={bid} onClick={() => send({ type: "bid", bid })}>
+                {bid ? `${bid} 分` : "不叫"}
+              </button>
+            ))}
+          {game.phase === "playing" && myTurn && (
+            <>
+              <button disabled={!game.target} onClick={() => send({ type: "pass" })}>过牌</button>
+              <button disabled={!selected.length} onClick={() => send({ type: "play", cardIds: selected })}>出牌</button>
+            </>
+          )}
+        </div>
+      </>
+    );
+  if (game.type === "zhajinhua")
+    return (
+      <>
+        <div className="room-game-meta"><span>第 {game.round} 轮</span><strong>底池 {game.pot} · 闷注 {game.stake}</strong></div>
+        <RoomCards cards={game.myHand ?? []} />
+        {!game.myHand?.length && <div className="room-card-backs">◆ ◆ ◆</div>}
+        <div className="room-inline-controls">
+          {myTurn && game.phase !== "done" && (
+            <>
+              <button disabled={game.seen?.[seat]} onClick={() => send({ type: "zjh", action: "see" })}>看牌</button>
+              <button onClick={() => send({ type: "zjh", action: "fold" })}>弃牌</button>
+              <button onClick={() => send({ type: "zjh", action: "call" })}>跟注</button>
+              {(game.stake ?? 10) < 20 && <button onClick={() => send({ type: "zjh", action: "raise", value: 20 })}>加到 20</button>}
+              {(game.stake ?? 10) < 40 && <button onClick={() => send({ type: "zjh", action: "raise", value: 40 })}>加到 40</button>}
+              {snapshot.players.filter((player) => player.seat !== seat && game.active?.[player.seat]).map((player) => (
+                <button disabled={(game.round ?? 0) < 2} key={player.id} onClick={() => send({ type: "zjh", action: "compare", value: player.seat })}>比 {player.name}</button>
+              ))}
+            </>
+          )}
+        </div>
+      </>
+    );
+  if (game.type === "holdem") {
+    const player = game.players?.[seat];
+    const toCall = Math.max(0, (game.currentBet ?? 0) - (player?.streetBet ?? 0));
+    return (
+      <>
+        <div className="room-board"><RoomCards cards={game.board ?? []} /></div>
+        <div className="room-game-meta"><span>{game.phase}</span><strong>底池 {game.pot} Mtok</strong></div>
+        <RoomCards cards={game.myHand ?? []} />
+        <div className="room-inline-controls">
+          {myTurn && game.phase !== "done" && (
+            <>
+              <button onClick={() => send({ type: "holdem", action: "fold" })}>弃牌</button>
+              <button onClick={() => send({ type: "holdem", action: toCall ? "call" : "check" })}>{toCall ? `跟注 ${toCall}` : "过牌"}</button>
+              <button onClick={() => send({ type: "holdem", action: "raise", target: (game.currentBet ?? 0) + (game.minRaise ?? 20) })}>加注</button>
+              <button onClick={() => send({ type: "holdem", action: "allin" })}>全下</button>
+            </>
+          )}
+        </div>
+      </>
+    );
+  }
+  const state = game.myState;
+  const hand = state?.hands[state.activeHand];
+  return (
+    <>
+      <div className="room-board"><RoomCards cards={state?.dealer ?? []} /></div>
+      <div className="room-game-meta"><span>BLACKJACK</span><strong>{state?.result ?? "庄家停软 17"}</strong></div>
+      <RoomCards cards={hand?.cards ?? []} />
+      <div className="room-inline-controls">
+        {state?.phase === "player" && (
+          <>
+            <button onClick={() => send({ type: "blackjack", action: "hit" })}>要牌</button>
+            <button onClick={() => send({ type: "blackjack", action: "stand" })}>停牌</button>
+            <button onClick={() => send({ type: "blackjack", action: "double" })}>加倍</button>
+            <button onClick={() => send({ type: "blackjack", action: "split" })}>分牌</button>
+          </>
+        )}
+      </div>
+    </>
   );
 }

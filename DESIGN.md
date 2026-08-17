@@ -312,6 +312,13 @@ The large field has a generous 36px desktop curve with a quiet inset seam; mobil
 - **Cards:** Opponent cards stay compact and face-down during play. At showdown only non-folded hands turn face-up; folded hands remain dimmed and hidden.
 - **Turn:** Amber marks the acting seat and the hero cards without introducing another panel. Mobile compresses opponent cards while preserving all six seats, the complete board and 44px actions in one viewport.
 
+### Multiplayer Room
+
+- **Creation:** One compact creation surface exposes game type and valid seat counts before the primary create action. Joining by six-character code remains a separate, equally legible path.
+- **Mixed seats:** Every seat names its human/AI status, readiness and connection state. Hosts receive exactly three lobby controls: remove AI, fill AI and start.
+- **Game continuity:** The room preserves the same table color assigned to each game while keeping invite, room code and connection state in paper utility chrome.
+- **Responsive behavior:** Seats use the configured room capacity as the grid count; cards and legal actions stay inside one viewport on desktop and reflow into 44px controls on mobile.
+
 ### Rules Guide
 
 - **Surface:** A warm paper card capped at 480px with the strongest modal shadow and a blurred dark backdrop.

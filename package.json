@@ -12,6 +12,7 @@
     "test": "node --import tsx --test tests/games.test.ts tests/auth.test.ts tests/multiplayer.test.ts",
     "test:html": "node --test tests/rendered-html.test.mjs",
     "test:room:e2e": "node --import tsx tests/room-e2e.mjs",
+    "test:room:ai": "node --import tsx tests/room-ai-e2e.mjs",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next --ignore-pattern '**/.wrangler/**'",
     "db:generate": "drizzle-kit generate"
   },

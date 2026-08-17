@@ -122,6 +122,14 @@
 
 验收来源：[engine-blackjack](https://github.com/kedoska/engine-blackjack)、[blackjack-strategy rule variants](https://github.com/gsdriver/blackjack-strategy)。
 
+## 5. 多人房与 AI 补位
+
+- 四种玩法均可创建私密房：斗地主/扎金花固定 3 席，德州 3–6 席，21 点 1–5 席。
+- 房主可邀请真人，也可在开局前用服务端 AI 一键补满空位或移除全部 AI。
+- AI 与真人共用同一服务端状态机、行动顺序和结算规则；客户端不能指定 AI 手牌或结果。
+- 斗地主、扎金花和德州共享一个权威公共牌局；多人 21 点中每名玩家独立对抗庄家并分别结算。
+- 所有真人准备后房主可开始。断线保留原座位；超时由服务端按玩法执行托管动作。
+
 ## 交付闸门
 
 - 每个规则模块必须有：牌型/合法动作单测、非法动作单测、完整牌局单测。

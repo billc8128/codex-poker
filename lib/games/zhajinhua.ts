@@ -21,6 +21,7 @@ export type ZjhState = {
   result?: string;
   delta?: number;
   winner?: number;
+  autoAi: boolean;
 };
 const categoryLevel: Record<ZjhCategory, number> = {
   high: 0,
@@ -69,7 +70,7 @@ export function compareZhajinhua(a: Card[], b: Card[]) {
       return (ra.tiebreak[i] || 0) - (rb.tiebreak[i] || 0);
   return 0;
 }
-export function newZhajinhua(seed = 2): ZjhState {
+export function newZhajinhua(seed = 2, autoAi = true): ZjhState {
   const d = deck(seed);
   return {
     phase: "betting",
@@ -86,6 +87,7 @@ export function newZhajinhua(seed = 2): ZjhState {
     round: 1,
     actor: 0,
     message: "第 1 轮 · 轮到你行动",
+    autoAi,
   };
 }
 const callCost = (s: ZjhState, p: number) => s.stake * (s.seen[p] ? 2 : 1);
@@ -161,41 +163,84 @@ function runAi(state: ZjhState): ZjhState {
   return s;
 }
 export const seeCards = (s: ZjhState): ZjhState =>
-  s.phase === "betting" && s.actor === 0
-    ? {
-        ...s,
-        seen: [true, s.seen[1], s.seen[2]],
-        message: "你已看牌；后续跟注成本为闷注的 2 倍",
-      }
-    : s;
+  seeZhajinhuaCards(s, 0);
+export function seeZhajinhuaCards(
+  s: ZjhState,
+  player: 0 | 1 | 2,
+): ZjhState {
+  if (s.phase !== "betting" || s.actor !== player) return s;
+  const seen = s.seen.map((value, index) =>
+    index === player ? true : value,
+  ) as [boolean, boolean, boolean];
+  return {
+    ...s,
+    seen,
+    message: `${player === 0 ? "你" : `AI ${player}`}已看牌；后续跟注成本翻倍`,
+  };
+}
 export function callZhajinhua(s: ZjhState): ZjhState {
-  if (s.phase !== "betting" || s.actor !== 0) return s;
-  return runAi(advance(pay(s, 0, callCost(s, 0)), 0));
+  return callZhajinhuaPlayer(s, 0);
+}
+export function callZhajinhuaPlayer(
+  s: ZjhState,
+  player: 0 | 1 | 2,
+): ZjhState {
+  if (s.phase !== "betting" || s.actor !== player) return s;
+  const next = advance(pay(s, player, callCost(s, player)), player);
+  return s.autoAi && player === 0 ? runAi(next) : next;
 }
 export function raiseZhajinhua(s: ZjhState, stake: 20 | 40): ZjhState {
-  if (s.phase !== "betting" || s.actor !== 0 || stake <= s.stake) return s;
+  return raiseZhajinhuaPlayer(s, 0, stake);
+}
+export function raiseZhajinhuaPlayer(
+  s: ZjhState,
+  player: 0 | 1 | 2,
+  stake: 20 | 40,
+): ZjhState {
+  if (s.phase !== "betting" || s.actor !== player || stake <= s.stake) return s;
   const next = { ...s, stake };
-  return runAi(advance(pay(next, 0, callCost(next, 0)), 0));
+  const advanced = advance(pay(next, player, callCost(next, player)), player);
+  return s.autoAi && player === 0 ? runAi(advanced) : advanced;
 }
 export function compareZhajinhuaAction(s: ZjhState, target: number): ZjhState {
+  return compareZhajinhuaPlayer(s, 0, target);
+}
+export function compareZhajinhuaPlayer(
+  s: ZjhState,
+  player: 0 | 1 | 2,
+  target: number,
+): ZjhState {
   if (
     s.phase !== "betting" ||
-    s.actor !== 0 ||
+    s.actor !== player ||
     s.round < 2 ||
-    !s.active[target]
+    !s.active[target] ||
+    target === player
   )
     return { ...s, message: "第二轮起才能与仍在局的玩家比牌" };
-  const next = comparePlayers(s, 0, target);
-  return next.phase === "done" ? next : runAi(advance(next, 0));
+  const next = comparePlayers(s, player, target);
+  if (next.phase === "done") return next;
+  const advanced = advance(next, player);
+  return s.autoAi && player === 0 ? runAi(advanced) : advanced;
 }
 export function foldZjh(s: ZjhState): ZjhState {
-  if (s.phase !== "betting" || s.actor !== 0) return s;
+  return foldZhajinhuaPlayer(s, 0);
+}
+export function foldZhajinhuaPlayer(
+  s: ZjhState,
+  player: 0 | 1 | 2,
+): ZjhState {
+  if (s.phase !== "betting" || s.actor !== player) return s;
   const folded = oneLeft({
     ...s,
-    active: [false, s.active[1], s.active[2]],
-    message: "你已弃牌",
+    active: s.active.map((value, index) =>
+      index === player ? false : value,
+    ) as [boolean, boolean, boolean],
+    message: `${player === 0 ? "你" : `AI ${player}`}已弃牌`,
   });
-  return folded.phase === "done" ? folded : runAi(advance(folded, 0));
+  if (folded.phase === "done") return folded;
+  const advanced = advance(folded, player);
+  return s.autoAi && player === 0 ? runAi(advanced) : advanced;
 }
 export function showdownZjh(s: ZjhState): ZjhState {
   if (s.phase !== "betting") return s;
