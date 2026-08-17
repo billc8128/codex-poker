@@ -1,6 +1,11 @@
 import assert from "node:assert/strict";
 import { createHmac } from "node:crypto";
 import { readFile } from "node:fs/promises";
+import {
+  canBeatDoudizhu,
+  classifyDoudizhu,
+  generateDoudizhuPlays,
+} from "../lib/games/doudizhu.ts";
 
 const site = process.env.CODEX_POKER_TEST_URL ?? "http://localhost:3001";
 const envFile = await readFile(new URL("../.env.local", import.meta.url), "utf8");
@@ -34,7 +39,7 @@ async function json(path, cookie, init = {}) {
 const waitFor = async (condition, label, timeout = 5000) => {
   const started = Date.now();
   while (Date.now() - started < timeout) {
-    const value = condition();
+    const value = await condition();
     if (value) return value;
     await new Promise((resolve) => setTimeout(resolve, 20));
   }
@@ -58,6 +63,9 @@ async function connect(url) {
 
 const cookies = ["e2e-player-0", "e2e-player-1", "e2e-player-2"].map(
   sessionCookie,
+);
+const initialBalances = await Promise.all(
+  cookies.map((cookie) => json("/api/results", cookie)),
 );
 const created = await json("/api/rooms", cookies[0], { method: "POST" });
 assert.match(created.code, /^[A-Z2-9]{6}$/);
@@ -110,8 +118,55 @@ await waitFor(
   "seat-preserving reconnect",
 );
 
+const activeClients = [clients[0], reconnected, clients[2]];
+let turns = 0;
+while (activeClients[0].snapshot.phase !== "done" && turns++ < 250) {
+  const game = activeClients[0].snapshot.game;
+  const actor = activeClients.find(
+    (client) => client.snapshot.me.seat === game.currentPlayer,
+  );
+  assert.ok(actor, "current player must have an active connection");
+  const legal = generateDoudizhuPlays(actor.snapshot.game.myHand)
+    .filter((cards) =>
+      canBeatDoudizhu(
+        classifyDoudizhu(cards),
+        actor.snapshot.game.target?.combo ?? null,
+      ),
+    )
+    .sort((a, b) => b.length - a.length);
+  const version = activeClients[0].snapshot.version;
+  actor.socket.send(
+    JSON.stringify(
+      legal.length
+        ? { type: "play", cardIds: legal[0].map((card) => card.id) }
+        : { type: "pass" },
+    ),
+  );
+  await waitFor(
+    () => activeClients[0].snapshot.version > version,
+    `turn ${turns}`,
+  );
+}
+assert.equal(activeClients[0].snapshot.phase, "done");
+assert.ok(turns < 250);
+
+const finalBalances = await waitFor(async () => {
+  const balances = await Promise.all(
+    cookies.map((cookie) => json("/api/results", cookie)),
+  );
+  return balances.some(
+    (account, index) => account.balance !== initialBalances[index].balance,
+  )
+    ? balances
+    : null;
+}, "room settlement", 8000);
+assert.equal(
+  finalBalances.reduce((total, account) => total + account.balance, 0),
+  initialBalances.reduce((total, account) => total + account.balance, 0),
+);
+
 await Promise.all(
-  [clients[0], clients[2], reconnected].map(
+  activeClients.map(
     (client) =>
       new Promise((resolve) => {
         client.socket.onclose = resolve;
@@ -126,6 +181,8 @@ console.log(
     players: 3,
     landlord: bidderSeat,
     reconnectSeat,
+    turns,
+    balances: finalBalances.map((account) => account.balance),
     status: "passed",
   }),
 );
