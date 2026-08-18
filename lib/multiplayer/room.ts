@@ -86,8 +86,26 @@ const config = {
 export function upgradeRoomState(raw: RoomState | Record<string, unknown>) {
   const state = raw as RoomState & { game?: ActiveRoomGame | DdzState | null };
   if (state.gameType) {
+    const game = state.game as ActiveRoomGame | null | undefined;
+    const upgradedGame =
+      game?.type === "holdem" && !game.state.handStartStacks
+        ? {
+            ...game,
+            state: {
+              ...game.state,
+              handStartStacks: game.state.players.map((player, seat) =>
+                game.state.street === "done"
+                  ? seat < state.maxPlayers
+                    ? 1000
+                    : 0
+                  : player.stack + player.totalBet,
+              ) as HoldemState["handStartStacks"],
+            },
+          }
+        : game;
     return {
       ...state,
+      game: upgradedGame ?? null,
       players: state.players.map((player) => ({
         ...player,
         isBot: player.isBot ?? false,
@@ -217,11 +235,32 @@ function startGame(state: RoomState, seed: number): ActiveRoomGame {
     return { type: "doudizhu", state: newDoudizhu(seed, false) };
   if (state.gameType === "zhajinhua")
     return { type: "zhajinhua", state: newZhajinhua(seed, false) };
-  if (state.gameType === "holdem")
+  if (state.gameType === "holdem") {
+    const previous = state.game?.type === "holdem" ? state.game.state : null;
+    const stacks = previous?.players.map((player) => player.stack);
+    if (stacks && stacks.filter((stack) => stack > 0).length < 2)
+      throw new Error("牌桌仅剩一名有筹码玩家，请新建房间");
+    let dealer = previous?.dealer ?? 0;
+    if (previous) {
+      for (let step = 1; step <= 6; step++) {
+        const candidate = ((previous.dealer + step) % 6) as HoldemSeat;
+        if ((stacks?.[candidate] ?? 0) > 0) {
+          dealer = candidate;
+          break;
+        }
+      }
+    }
     return {
       type: "holdem",
-      state: newHoldem(seed, 0, false, state.players.length),
+      state: newHoldem(
+        seed,
+        dealer as HoldemSeat,
+        false,
+        state.players.length,
+        stacks,
+      ),
     };
+  }
   return {
     type: "blackjack",
     states: Object.fromEntries(
@@ -568,6 +607,7 @@ function snapshotGame(game: ActiveRoomGame | null, seat?: number) {
       pot: state.pot,
       currentBet: state.currentBet,
       minRaise: state.minRaise,
+      handStartStacks: state.handStartStacks,
       dealer: state.dealer,
       smallBlind: state.smallBlind,
       bigBlind: state.bigBlind,
@@ -578,9 +618,7 @@ function snapshotGame(game: ActiveRoomGame | null, seat?: number) {
       myHand: seat === undefined ? [] : state.hands[seat],
       revealedHands:
         state.street === "done"
-          ? state.hands.map((hand, index) =>
-              state.players[index].folded ? [] : hand,
-            )
+          ? state.hands
           : null,
     };
   }
@@ -637,7 +675,9 @@ export function roomSettlements(state: RoomState) {
       userId: player.id,
       displayName: player.name,
       seat: player.seat,
-      delta: game.state.players[player.seat].stack - 1000,
+      delta:
+        game.state.players[player.seat].stack -
+        game.state.handStartStacks[player.seat],
     }));
   return state.players.filter((player) => !player.isBot).map((player) => ({
     userId: player.id,

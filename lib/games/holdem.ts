@@ -27,6 +27,7 @@ export type HoldemState = {
   board: Card[];
   shoe: Card[];
   players: Six<HoldemPlayer>;
+  handStartStacks: Six<number>;
   pot: number;
   actor: HoldemSeat;
   dealer: HoldemSeat;
@@ -117,23 +118,47 @@ export function newHoldem(
   dealerSeat: HoldemSeat = asSeat(seed % 6),
   autoAi = true,
   playerCount = 6,
+  startingStacks?: number[],
 ): HoldemState {
   const cards = deck(seed);
   const hands = seats.map((seat) => [cards[seat], cards[seat + 6]]) as Six<
     Card[]
   >;
-  const players = seats.map(() => freshPlayer()) as Six<HoldemPlayer>;
-  const dealer = dealerSeat,
-    smallBlind = asSeat(dealer + 1),
-    bigBlind = asSeat(dealer + 2);
+  const players = seats.map((seat) => ({
+    ...freshPlayer(),
+    stack: startingStacks?.[seat] ?? 1000,
+  })) as Six<HoldemPlayer>;
+  seats.forEach((seat) => {
+    if (seat >= playerCount || players[seat].stack <= 0) {
+      players[seat] = { ...players[seat], folded: true };
+      hands[seat] = [];
+    }
+  });
+  const liveSeats = seats.filter((seat) => !players[seat].folded);
+  if (liveSeats.length < 2) throw new Error("牌桌至少需要两名有筹码的玩家");
+  const nextLiveSeat = (from: HoldemSeat) => {
+    for (let step = 1; step <= 6; step++) {
+      const seat = asSeat(from + step);
+      if (!players[seat].folded) return seat;
+    }
+    return from;
+  };
+  const dealer = players[dealerSeat].folded ? nextLiveSeat(dealerSeat) : dealerSeat;
+  const headsUp = liveSeats.length === 2,
+    smallBlind = headsUp ? dealer : nextLiveSeat(dealer),
+    bigBlind = nextLiveSeat(smallBlind);
   let smallPaid: number, bigPaid: number;
   [players[smallBlind], smallPaid] = pay(players[smallBlind], 10);
   [players[bigBlind], bigPaid] = pay(players[bigBlind], 20);
-  seats.forEach((seat) => {
-    if (seat >= playerCount) players[seat] = { ...players[seat], folded: true };
-  });
-  let actor = asSeat(bigBlind + 1);
-  while (players[actor].folded) actor = asSeat(actor + 1);
+  const handStartStacks = players.map(
+    (player, seat) => startingStacks?.[seat] ?? (seat < playerCount ? 1000 : 0),
+  ) as Six<number>;
+  const actionables = liveSeats.filter((seat) => !players[seat].allIn);
+  let actor = headsUp ? dealer : nextLiveSeat(bigBlind);
+  if (actionables.length)
+    while (players[actor].folded || players[actor].allIn)
+      actor = nextLiveSeat(actor);
+  else actor = dealer;
   const state: HoldemState = {
     seed,
     street: "preflop",
@@ -141,19 +166,21 @@ export function newHoldem(
     board: [],
     shoe: cards.slice(12),
     players,
+    handStartStacks,
     pot: smallPaid + bigPaid,
     actor,
     dealer,
     smallBlind,
     bigBlind,
-    currentBet: 20,
+    currentBet: bigPaid,
     minRaise: 20,
     acted: freshBooleans(),
     actions: [],
     autoAi,
-    message: `翻牌前 · ${playerName(smallBlind)}下小盲 10，${playerName(bigBlind)}下大盲 20`,
+    message: `翻牌前 · ${playerName(smallBlind)}下小盲 ${smallPaid}，${playerName(bigBlind)}下大盲 ${bigPaid}`,
   };
-  return autoAi ? runAi(state) : state;
+  const ready = actionableSeats(state).length <= 1 ? runout(state) : state;
+  return autoAi ? runAi(ready) : ready;
 }
 
 export function holdemToCall(s: HoldemState, player = s.actor) {
@@ -183,7 +210,7 @@ function finishUncontested(s: HoldemState, winner: HoldemSeat): HoldemState {
     actor: winner,
     result,
     message: result,
-    delta: players[0].stack - 1000,
+    delta: players[0].stack - s.handStartStacks[0],
     winners: [winner],
   };
 }
@@ -230,7 +257,7 @@ function showdown(s: HoldemState): HoldemState {
     players,
     result,
     message: result,
-    delta: players[0].stack - 1000,
+    delta: players[0].stack - s.handStartStacks[0],
     winners,
   };
 }

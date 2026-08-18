@@ -202,6 +202,36 @@ test("six-max Holdem room advances five strategy bots around the human", () => {
       : 0,
     6000,
   );
+  const firstHand = room.game?.type === "holdem" ? room.game.state : null;
+  assert.ok(firstHand);
+  const firstStacks = firstHand.players.map((player) => player.stack);
+  const firstDealer = firstHand.dealer;
+  const settlements = roomSettlements(room);
+  assert.equal(
+    settlements[0].delta,
+    firstStacks[0] - firstHand.handStartStacks[0],
+  );
+  const showdown = roomSnapshot(room, "human").game;
+  assert.equal(
+    showdown?.type === "holdem" &&
+      showdown.revealedHands?.every((hand) => hand.length === 2),
+    true,
+  );
+
+  room = applyRoomCommand(
+    { ...room, settled: true },
+    "human",
+    { type: "start", seed: 34 },
+  );
+  const secondHand = room.game?.type === "holdem" ? room.game.state : null;
+  assert.ok(secondHand);
+  assert.deepEqual(secondHand.handStartStacks, firstStacks);
+  assert.notEqual(secondHand.dealer, firstDealer);
+  assert.equal(
+    secondHand.players.reduce((sum, player) => sum + player.stack, 0) +
+      secondHand.pot,
+    6000,
+  );
 });
 
 test("multiplayer Blackjack resolves bots while the human controls their hand", () => {

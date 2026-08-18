@@ -41,6 +41,7 @@ type GameSnapshot = {
   board?: Card[];
   currentBet?: number;
   minRaise?: number;
+  handStartStacks?: number[];
   dealer?: number;
   smallBlind?: number;
   bigBlind?: number;
@@ -111,7 +112,12 @@ function holdemPosition(game: GameSnapshot, seat: number) {
 function holdemActionLabel(game: GameSnapshot, seat: number) {
   const player = game.players?.[seat];
   if (!player) return "等待入座";
-  if (game.phase === "done" && game.winners?.includes(seat)) return "本局胜者";
+  if (game.phase === "done") {
+    if (game.winners?.includes(seat)) return "本局胜者";
+    if (player.stack <= 0) return "已淘汰";
+    return player.folded ? "已弃牌" : "本手未获胜";
+  }
+  if (player.stack <= 0 && player.folded) return "已淘汰";
   if (player.folded) return "已弃牌";
   if (player.allIn) return `全下 ${player.streetBet}`;
   if (game.currentPlayer === seat) return "行动中";
@@ -251,6 +257,18 @@ function RoomCards({
   );
 }
 
+function RoomMiniCards({ cards }: { cards: Card[] }) {
+  return (
+    <div className="room-mini-cards" aria-label={cards.map(cardName).join("、")}>
+      {cards.map((card, index) => (
+        <span className="room-mini-card" key={card.id ?? `${cardName(card)}-${index}`}>
+          <CardArtwork rank={card.rank} suit={card.suit} />
+        </span>
+      ))}
+    </div>
+  );
+}
+
 export function MultiplayerRoom({
   code,
   playerName,
@@ -348,7 +366,9 @@ export function MultiplayerRoom({
     });
 
   return (
-    <main className={`room-shell room-theme-${snapshot?.gameType ?? "doudizhu"}`}>
+    <main
+      className={`room-shell room-theme-${snapshot?.gameType ?? "doudizhu"} room-phase-${snapshot?.phase ?? "loading"}`}
+    >
       <header className="room-nav">
         <a href="/rooms">← 多人房</a>
         <strong>房间 {code}</strong>
@@ -589,7 +609,9 @@ function RoomGameTable({
     const toCall = Math.max(0, (game.currentBet ?? 0) - (player?.streetBet ?? 0));
     return (
       <>
-        <div className="room-holdem-center">
+        <div
+          className={`room-holdem-center ${game.phase === "done" ? "is-showdown" : ""}`}
+        >
           <header>
             <span>{holdemStreetNames[game.phase] ?? game.phase}</span>
             <strong>{game.pot ?? 0}</strong>
@@ -605,9 +627,46 @@ function RoomGameTable({
           <footer>
             当前下注 {game.currentBet ?? 0} · 最小加注 {game.minRaise ?? 0}
           </footer>
+          {game.phase === "done" && (
+            <>
+              <div className="room-holdem-result">
+                赢家：
+                {(game.winners ?? [])
+                  .map((winner) => playerAt(winner)?.name ?? `座位 ${winner + 1}`)
+                  .join("、")}
+              </div>
+              <div className="room-holdem-showdown" aria-label="本局摊牌">
+                {snapshot.players.map((roomPlayer) => {
+                  const tablePlayer = game.players?.[roomPlayer.seat];
+                  const start = game.handStartStacks?.[roomPlayer.seat] ?? 1000;
+                  const end = tablePlayer?.stack ?? 0;
+                  const delta = end - start;
+                  const winner = game.winners?.includes(roomPlayer.seat);
+                  return (
+                    <div
+                      className={`room-showdown-player ${winner ? "is-winner" : ""}`}
+                      key={roomPlayer.id}
+                    >
+                      <b>{roomPlayer.name}</b>
+                      <RoomMiniCards
+                        cards={game.revealedHands?.[roomPlayer.seat] ?? []}
+                      />
+                      <span className={delta > 0 ? "gain" : delta < 0 ? "loss" : ""}>
+                        {delta > 0 ? "+" : ""}{delta} · {end} Mtok
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </>
+          )}
         </div>
-        <span className="room-holdem-hand-label">你的底牌</span>
-        <RoomCards cards={game.myHand ?? []} hero />
+        {game.phase !== "done" && (
+          <>
+            <span className="room-holdem-hand-label">你的底牌</span>
+            <RoomCards cards={game.myHand ?? []} hero />
+          </>
+        )}
         <div className="room-inline-controls">
           {myTurn && game.phase !== "done" && (
             <>

@@ -340,6 +340,17 @@ test("Six-max Holdem records a legal minimum preflop raise to 40", () => {
   );
   assert.equal(heroRaise?.amount, 40);
 });
+test("Holdem accepts carried table stacks and records the hand baseline", () => {
+  const stacks = [1500, 900, 600, 0, 0, 0];
+  const s = newHoldem(41, 0, false, 6, stacks);
+  assert.deepEqual(s.handStartStacks, stacks);
+  assert.equal(s.players[3].folded, true);
+  assert.equal(s.hands[3].length, 0);
+  assert.equal(
+    s.players.reduce((total, player) => total + player.stack, 0) + s.pot,
+    3000,
+  );
+});
 test("Holdem AI folds weak hands under pressure and attacks with premium hands", () => {
   const base = newHoldem(3);
   const pressured = {
