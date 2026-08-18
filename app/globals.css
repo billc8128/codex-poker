@@ -1514,6 +1514,32 @@ button {
   box-shadow: 0 8px 18px #07102a66;
   overflow: hidden;
 }
+.room-winning-cards .card-corner-bottom,
+.room-card-row-table .card-corner-bottom {
+  display: none;
+}
+.room-winning-cards .card-pips i,
+.room-card-row-table .card-pips i {
+  display: none;
+}
+.room-winning-cards .card-pips i:first-child,
+.room-card-row-table .card-pips i:first-child {
+  top: 60% !important;
+  left: 65% !important;
+  display: block;
+  transform: translate(-50%, -50%);
+  font-size: 20px;
+}
+.room-winning-cards .card-artwork.is-ten .card-corner b,
+.room-card-row-table .card-artwork.is-ten .card-corner b {
+  font-size: 13px;
+  letter-spacing: -0.12em;
+}
+.room-winning-cards .card-figure,
+.room-card-row-table .card-figure {
+  inset: 11px 3px 5px 17px;
+  background-position: 52% 18%;
+}
 .room-bid-history {
   position: absolute;
   top: 58%;
