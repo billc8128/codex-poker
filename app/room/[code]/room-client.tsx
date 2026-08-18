@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { BlackjackState } from "../../../lib/games/blackjack";
 import {
   CardArtwork,
@@ -85,27 +85,114 @@ function RoomCards({
   selected = [],
   disabled = true,
   compact = false,
-  onToggle,
+  dragSelect = false,
+  onSelectionChange,
 }: {
   cards: Card[];
   selected?: string[];
   disabled?: boolean;
   compact?: boolean;
-  onToggle?: (id: string) => void;
+  dragSelect?: boolean;
+  onSelectionChange?: (ids: string[]) => void;
 }) {
+  const drag = useRef<{
+    pointerId: number;
+    start: number;
+    last: number;
+    selecting: boolean;
+    base: Set<string>;
+    centers: number[];
+  } | null>(null);
+  const cardIds = cards.map(
+    (card, index) => card.id ?? `${card.rank}-${card.suit}-${index}`,
+  );
+  const nearestCard = (centers: number[], x: number) => {
+    let nearest = -1;
+    let distance = Number.POSITIVE_INFINITY;
+    centers.forEach((center, index) => {
+      const next = Math.abs(center - x);
+      if (next < distance) {
+        nearest = index;
+        distance = next;
+      }
+    });
+    return nearest;
+  };
+  const updateDragSelection = (end: number) => {
+    const current = drag.current;
+    if (!current || end < 0 || end === current.last) return;
+    current.last = end;
+    const first = Math.min(current.start, end);
+    const last = Math.max(current.start, end);
+    const next = new Set(current.base);
+    cardIds.slice(first, last + 1).forEach((id) => {
+      if (current.selecting) next.add(id);
+      else next.delete(id);
+    });
+    onSelectionChange?.(cardIds.filter((id) => next.has(id)));
+  };
+  const beginDrag = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (!dragSelect || !event.isPrimary || event.button !== 0) return;
+    event.preventDefault();
+    const centers = Array.from(
+      event.currentTarget.querySelectorAll<HTMLElement>("button"),
+      (element) => {
+        const rect = element.getBoundingClientRect();
+        return rect.left + rect.width / 2;
+      },
+    );
+    const index = nearestCard(centers, event.clientX);
+    if (index < 0) return;
+    drag.current = {
+      pointerId: event.pointerId,
+      start: index,
+      last: -1,
+      selecting: !selected.includes(cardIds[index]),
+      base: new Set(selected),
+      centers,
+    };
+    event.currentTarget.setPointerCapture(event.pointerId);
+    updateDragSelection(index);
+  };
+  const moveDrag = (event: React.PointerEvent<HTMLDivElement>) => {
+    const current = drag.current;
+    if (!current || current.pointerId !== event.pointerId) return;
+    event.preventDefault();
+    updateDragSelection(nearestCard(current.centers, event.clientX));
+  };
+  const endDrag = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (drag.current?.pointerId !== event.pointerId) return;
+    if (event.currentTarget.hasPointerCapture(event.pointerId))
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    drag.current = null;
+  };
+
   return (
     <div
-      className={`room-card-row ${compact ? "room-card-row-hand" : "room-card-row-table"}`}
+      aria-label={dragSelect ? "你的手牌，可点击或拖动连续选择" : undefined}
+      className={`room-card-row ${compact ? "room-card-row-hand" : "room-card-row-table"} ${dragSelect ? "is-drag-selecting" : ""}`}
+      onPointerCancel={dragSelect ? endDrag : undefined}
+      onPointerDown={dragSelect ? beginDrag : undefined}
+      onPointerMove={dragSelect ? moveDrag : undefined}
+      onPointerUp={dragSelect ? endDrag : undefined}
     >
       {cards.map((card, index) => {
-        const id = card.id ?? `${card.rank}-${card.suit}-${index}`;
+        const id = cardIds[index];
         return (
           <button
+            aria-label={cardName(card)}
             aria-pressed={selected.includes(id)}
             className={selected.includes(id) ? "selected" : ""}
             disabled={disabled}
             key={id}
-            onClick={() => onToggle?.(id)}
+            onClick={() =>
+              onSelectionChange?.(
+                selected.includes(id)
+                  ? selected.filter((value) => value !== id)
+                  : [...selected, id],
+              )
+            }
+            style={{ "--room-card-index": index } as React.CSSProperties}
           >
             <CardArtwork rank={card.rank} suit={card.suit} />
           </button>
@@ -275,13 +362,7 @@ export function MultiplayerRoom({
         ) : (
           <RoomGameTable
             myTurn={myTurn}
-            onToggle={(id) =>
-              setSelected((current) =>
-                current.includes(id)
-                  ? current.filter((value) => value !== id)
-                  : [...current, id],
-              )
-            }
+            onSelectionChange={setSelected}
             playerAt={playerAt}
             selected={selected}
             send={send}
@@ -353,14 +434,14 @@ function RoomGameTable({
   selected,
   myTurn,
   send,
-  onToggle,
+  onSelectionChange,
   playerAt,
 }: {
   snapshot: Snapshot;
   selected: string[];
   myTurn: boolean;
   send: (message: object) => void;
-  onToggle: (id: string) => void;
+  onSelectionChange: (ids: string[]) => void;
   playerAt: (seat: number) => Player | undefined;
 }) {
   const game = snapshot.game!;
@@ -379,7 +460,14 @@ function RoomGameTable({
             </span>
           ))}
         </div>
-        <RoomCards cards={game.myHand ?? []} compact disabled={!myTurn || game.phase !== "playing"} onToggle={onToggle} selected={selected} />
+        <RoomCards
+          cards={game.myHand ?? []}
+          compact
+          disabled={!myTurn || game.phase !== "playing"}
+          dragSelect={myTurn && game.phase === "playing"}
+          onSelectionChange={onSelectionChange}
+          selected={selected}
+        />
         <div className="room-inline-controls">
           {game.phase === "bidding" && myTurn &&
             [0, 1, 2, 3].map((bid) => (

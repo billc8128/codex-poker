@@ -1579,11 +1579,29 @@ button {
   display: none;
   font-size: 16px;
 }
-.room-card-row-hand .card-pips i:first-child {
+.room-card-row-hand button:last-child .card-pips i:first-child {
   top: 58% !important;
   left: 72% !important;
   display: block;
   transform: translate(-50%, -50%);
+}
+.room-card-row-hand.is-drag-selecting {
+  touch-action: none;
+  user-select: none;
+  cursor: grab;
+}
+.room-card-row-hand.is-drag-selecting:active {
+  cursor: grabbing;
+}
+.room-card-row-hand.is-drag-selecting button {
+  pointer-events: none;
+}
+.room-card-row-hand button {
+  z-index: var(--room-card-index);
+}
+.room-card-row-hand button.selected {
+  z-index: var(--room-card-index);
+  transform: translateY(-10px);
 }
 .room-card-row-hand .card-artwork.is-ten .card-corner b {
   font-size: 13px;
@@ -1743,6 +1761,29 @@ button {
     flex: 0 0 44px;
     font-size: 13px;
     padding: 5px;
+  }
+  .room-card-row.room-card-row-hand {
+    overflow-x: hidden;
+    justify-content: safe center;
+  }
+  .room-card-row.room-card-row-hand button {
+    width: 38px;
+    height: 54px;
+    margin-left: -22px;
+    flex: 0 0 38px;
+  }
+  .room-card-row.room-card-row-hand button:first-child {
+    margin-left: 0;
+  }
+  .room-card-row-hand .card-corner-top {
+    top: 5px;
+    left: 5px;
+  }
+  .room-card-row-hand .card-corner b {
+    font-size: 12px;
+  }
+  .room-card-row-hand .card-corner i {
+    font-size: 9px;
   }
   .room-inline-controls {
     right: 10px;
