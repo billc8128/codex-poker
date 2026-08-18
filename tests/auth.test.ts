@@ -1,6 +1,10 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { signToken, verifyToken } from "../lib/auth/signed-token";
+import {
+  safePluginReturnTo,
+  validPluginInstallationId,
+} from "../lib/auth/plugin-launch";
 
 const secret = "codex-poker-test-secret-with-enough-entropy";
 
@@ -27,4 +31,15 @@ test("plugin tokens reject tampering and expiry", async () => {
     exp: Math.floor(Date.now() / 1000) + 60,
   });
   assert.equal(await verifyToken(secret, `${active}x`, "session"), null);
+});
+
+test("plugin launch requests accept only UUID installations and local paths", () => {
+  assert.equal(
+    validPluginInstallationId("5c5ca1aa-e977-45da-9930-e7ee8256cf60"),
+    true,
+  );
+  assert.equal(validPluginInstallationId("shared-account"), false);
+  assert.equal(safePluginReturnTo("/play/holdem?from=plugin"), "/play/holdem?from=plugin");
+  assert.equal(safePluginReturnTo("https://example.com"), "/");
+  assert.equal(safePluginReturnTo("//example.com"), "/");
 });

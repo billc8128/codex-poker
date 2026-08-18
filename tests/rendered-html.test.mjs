@@ -54,3 +54,16 @@ test("production game routes redirect anonymous visitors to ChatGPT sign-in", as
     /^\/signin-with-chatgpt\?return_to=%2Fplay%2Fholdem$/,
   );
 });
+
+test("production rejects an invalid plugin launch request", async () => {
+  const response = await fetch(`${base}/api/plugin-launch`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      installationId: "not-an-installation-id",
+      returnTo: "//example.com",
+    }),
+  });
+  assert.equal(response.status, 400);
+  assert.deepEqual(await response.json(), { error: "Invalid plugin installation" });
+});

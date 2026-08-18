@@ -24,14 +24,14 @@ npm run test:html
 
 ## Codex plugin
 
-The plugin lives at `plugins/codex-poker`. Its MCP tool opens the deployed lobby or one named table:
+The plugin lives at `plugins/codex-poker`. Install it directly from the public GitHub marketplace:
 
 ```bash
-codex plugin marketplace add .
+codex plugin marketplace add billc8128/codex-poker --ref main
 codex plugin add codex-poker@codex-poker-local
 ```
 
-Start a new Codex task after installation, then ask “Open the Codex Poker lobby” or “Start a Blackjack table.” To test a local server instead, temporarily override `CODEX_POKER_URL` in `plugins/codex-poker/.mcp.json`.
+Start a new Codex task after installation, then ask “Open the Codex Poker lobby” or “Start a Blackjack table.” The plugin has no package-install or shared-secret setup; it asks the deployed Site for a 90-second launch link and stores only a random installation ID on the local device. To test a local server instead, temporarily override `CODEX_POKER_URL` in `plugins/codex-poker/.mcp.json`.
 
 ## ChatGPT Sites
 

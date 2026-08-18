@@ -1,4 +1,4 @@
-import { createHmac, randomUUID } from "node:crypto";
+import { randomUUID } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
@@ -15,7 +15,6 @@ const base = (
 const stateDirectory =
   process.env.CODEX_POKER_STATE_DIR ?? join(homedir(), ".codex", "codex-poker");
 const accountPath = join(stateDirectory, "account-id");
-const secretPath = join(stateDirectory, "launch-secret");
 const slugs = new Set(["doudizhu", "zhajinhua", "holdem", "blackjack"]);
 
 function readOrCreateAccountId() {
@@ -25,26 +24,19 @@ function readOrCreateAccountId() {
   return readFileSync(accountPath, "utf8").trim();
 }
 
-function launchSecret() {
-  const secret = process.env.CODEX_POKER_LAUNCH_SECRET?.trim() ??
-    (existsSync(secretPath) ? readFileSync(secretPath, "utf8").trim() : "");
-  if (!secret)
-    throw new Error("Codex Poker plugin session is not configured");
-  return secret;
-}
-
-function launchToken() {
-  const payload = Buffer.from(
-    JSON.stringify({
-      sub: readOrCreateAccountId(),
-      kind: "launch",
-      exp: Math.floor(Date.now() / 1000) + 60 * 5,
+async function requestLaunchUrl(returnTo) {
+  const response = await fetch(`${base}/api/plugin-launch`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      installationId: readOrCreateAccountId(),
+      returnTo,
     }),
-  ).toString("base64url");
-  const signature = createHmac("sha256", launchSecret())
-    .update(payload)
-    .digest("base64url");
-  return `${payload}.${signature}`;
+  });
+  const body = await response.json().catch(() => null);
+  if (!response.ok || typeof body?.launchUrl !== "string")
+    throw new Error(body?.error ?? "Codex Poker launch service is unavailable");
+  return body.launchUrl;
 }
 
 const server = new Server(
@@ -92,7 +84,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       : game && slugs.has(game)
         ? `/play/${game}`
         : "/";
-  const url = `${base}/plugin-login?token=${encodeURIComponent(launchToken())}&return_to=${encodeURIComponent(returnTo)}`;
+  const url = await requestLaunchUrl(returnTo);
   return {
     content: [
       {
