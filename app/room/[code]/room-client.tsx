@@ -84,15 +84,19 @@ function RoomCards({
   cards,
   selected = [],
   disabled = true,
+  compact = false,
   onToggle,
 }: {
   cards: Card[];
   selected?: string[];
   disabled?: boolean;
+  compact?: boolean;
   onToggle?: (id: string) => void;
 }) {
   return (
-    <div className="room-card-row">
+    <div
+      className={`room-card-row ${compact ? "room-card-row-hand" : "room-card-row-table"}`}
+    >
       {cards.map((card, index) => {
         const id = card.id ?? `${card.rank}-${card.suit}-${index}`;
         return (
@@ -375,7 +379,7 @@ function RoomGameTable({
             </span>
           ))}
         </div>
-        <RoomCards cards={game.myHand ?? []} disabled={!myTurn || game.phase !== "playing"} onToggle={onToggle} selected={selected} />
+        <RoomCards cards={game.myHand ?? []} compact disabled={!myTurn || game.phase !== "playing"} onToggle={onToggle} selected={selected} />
         <div className="room-inline-controls">
           {game.phase === "bidding" && myTurn &&
             [0, 1, 2, 3].map((bid) => (

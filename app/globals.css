@@ -1501,7 +1501,7 @@ button {
   transform: translateX(-50%);
   gap: 4px;
 }
-.room-winning-cards span {
+.room-winning-cards > span {
   position: relative;
   display: grid;
   width: 52px;
@@ -1568,6 +1568,36 @@ button {
 .room-my-hand button:disabled,
 .room-card-row button:disabled {
   cursor: default;
+}
+.room-card-row.room-card-row-table button {
+  margin-left: 4px;
+}
+.room-card-row-hand .card-corner-bottom {
+  display: none;
+}
+.room-card-row-hand .card-pips i {
+  display: none;
+  font-size: 16px;
+}
+.room-card-row-hand .card-pips i:first-child {
+  top: 58% !important;
+  left: 72% !important;
+  display: block;
+  transform: translate(-50%, -50%);
+}
+.room-card-row-hand .card-artwork.is-ten .card-corner b {
+  font-size: 13px;
+  letter-spacing: -0.12em;
+}
+.room-card-row-hand .card-figure {
+  inset: 10px 2px 6px 18px;
+  background-position: 52% 18%;
+}
+.room-card-row-hand button:not(:last-child) .card-figure {
+  display: none;
+}
+.room-card-row-hand .card-joker {
+  inset: 6px 2px 5px 16px;
 }
 .room-inline-controls {
   position: absolute;
@@ -1723,7 +1753,7 @@ button {
     min-height: 44px;
     flex: 1;
   }
-  .room-winning-cards span {
+  .room-winning-cards > span {
     width: 42px;
     height: 58px;
     font-size: 14px;
