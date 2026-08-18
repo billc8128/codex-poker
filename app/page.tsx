@@ -38,13 +38,14 @@ export default async function Home() {
               <a href="/account">{identity.displayName}</a>
               <span>Codex plugin</span>
             </>
+          ) : identity?.source === "local" ? (
+            <>
+              <a href="/account">{identity.displayName}</a>
+              <span>Local mode</span>
+            </>
           ) : (
             <>
-              {identity ? (
-                <a href="/account">{identity.displayName}</a>
-              ) : (
-                <span>Guest</span>
-              )}
+              <span>Guest</span>
               <a href="/signin-with-chatgpt?return_to=%2F">
                 Sign in with ChatGPT
               </a>

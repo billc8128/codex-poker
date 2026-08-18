@@ -28,10 +28,12 @@ export default async function AccountPage() {
           href={
             identity.source === "plugin"
               ? "/plugin-logout"
-              : "/signout-with-chatgpt?return_to=%2F"
+              : identity.source === "chatgpt"
+                ? "/signout-with-chatgpt?return_to=%2F"
+                : "/"
           }
         >
-          退出账户
+          {identity.source === "local" ? "返回大厅" : "退出账户"}
         </a>
       </header>
       <section className="account-summary">
