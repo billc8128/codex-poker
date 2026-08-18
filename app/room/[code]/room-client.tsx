@@ -47,8 +47,15 @@ type GameSnapshot = {
   players?: Array<{
     stack: number;
     streetBet: number;
+    totalBet?: number;
     folded: boolean;
     allIn: boolean;
+  }>;
+  actions?: Array<{
+    player: number;
+    action: "fold" | "check" | "call" | "raise" | "allin";
+    amount: number;
+    street: string;
   }>;
   winners?: number[];
   myState?: BlackjackState | null;
@@ -79,6 +86,46 @@ const gameNames: Record<RoomGameId, string> = {
   blackjack: "21 点",
 };
 const cardName = (card: Card) => cardDisplayName(card);
+const holdemStreetNames: Record<string, string> = {
+  preflop: "翻牌前",
+  flop: "翻牌",
+  turn: "转牌",
+  river: "河牌",
+  done: "摊牌",
+};
+const holdemActionNames = {
+  fold: "弃牌",
+  check: "过牌",
+  call: "跟注",
+  raise: "加注",
+  allin: "全下",
+} as const;
+
+function holdemPosition(game: GameSnapshot, seat: number) {
+  const dealer = game.dealer ?? 0;
+  return ["D", "SB", "BB", "UTG", "HJ", "CO"][
+    (seat - dealer + 6) % 6
+  ];
+}
+
+function holdemActionLabel(game: GameSnapshot, seat: number) {
+  const player = game.players?.[seat];
+  if (!player) return "等待入座";
+  if (game.phase === "done" && game.winners?.includes(seat)) return "本局胜者";
+  if (player.folded) return "已弃牌";
+  if (player.allIn) return `全下 ${player.streetBet}`;
+  if (game.currentPlayer === seat) return "行动中";
+  const latest = [...(game.actions ?? [])]
+    .reverse()
+    .find(
+      (action) =>
+        action.player === seat &&
+        (game.phase === "done" || action.street === game.phase),
+    );
+  if (!latest) return player.streetBet ? `已下 ${player.streetBet}` : "等待行动";
+  const amount = latest.amount > 0 ? ` ${latest.amount}` : "";
+  return `${holdemActionNames[latest.action]}${amount}`;
+}
 
 function RoomCards({
   cards,
@@ -86,6 +133,7 @@ function RoomCards({
   disabled = true,
   compact = false,
   dragSelect = false,
+  hero = false,
   onSelectionChange,
 }: {
   cards: Card[];
@@ -93,6 +141,7 @@ function RoomCards({
   disabled?: boolean;
   compact?: boolean;
   dragSelect?: boolean;
+  hero?: boolean;
   onSelectionChange?: (ids: string[]) => void;
 }) {
   const drag = useRef<{
@@ -170,7 +219,7 @@ function RoomCards({
   return (
     <div
       aria-label={dragSelect ? "你的手牌，可点击或拖动连续选择" : undefined}
-      className={`room-card-row ${compact ? "room-card-row-hand" : "room-card-row-table"} ${dragSelect ? "is-drag-selecting" : ""}`}
+      className={`room-card-row ${compact ? "room-card-row-hand" : "room-card-row-table"} ${dragSelect ? "is-drag-selecting" : ""} ${hero ? "room-card-row-hero" : ""}`}
       onPointerCancel={dragSelect ? endDrag : undefined}
       onPointerDown={dragSelect ? beginDrag : undefined}
       onPointerMove={dragSelect ? moveDrag : undefined}
@@ -332,15 +381,25 @@ export function MultiplayerRoom({
         >
           {Array.from({ length: snapshot?.maxPlayers ?? 3 }, (_, seat) => {
             const player = playerAt(seat);
+            const holdemPlayer =
+              snapshot?.game?.type === "holdem"
+                ? snapshot.game.players?.[seat]
+                : undefined;
             return (
               <div
-                className={`room-seat ${snapshot?.game?.currentPlayer === seat ? "turn" : ""}`}
+                className={`room-seat room-seat-${seat} ${snapshot?.game?.currentPlayer === seat ? "turn" : ""} ${holdemPlayer?.folded ? "is-folded" : ""} ${holdemPlayer?.allIn ? "is-all-in" : ""} ${snapshot?.game?.winners?.includes(seat) ? "is-winner" : ""}`}
                 key={seat}
               >
                 <b>{player?.name ?? "等待加入"}</b>
                 <span>
                   {player
-                    ? `${player.isBot ? "AI" : player.connected ? "在线" : "断线"} · ${player.ready ? "已准备" : "未准备"}`
+                    ? snapshot?.phase === "lobby"
+                      ? `${player.isBot ? "AI" : player.connected ? "在线" : "断线"} · ${player.ready ? "已准备" : "未准备"}`
+                      : player.isBot
+                        ? "策略 AI"
+                        : player.connected
+                          ? "在线"
+                          : "断线托管"
                     : `座位 ${seat + 1}`}
                 </span>
                 {snapshot?.game && <SeatGameState snapshot={snapshot} seat={seat} />}
@@ -424,8 +483,21 @@ function SeatGameState({ snapshot, seat }: { snapshot: Snapshot; seat: number })
     return <strong>{game.landlord === seat ? "地主" : "农民"} · {game.handCounts?.[seat]} 张</strong>;
   if (game.type === "zhajinhua")
     return <strong>{game.active?.[seat] ? "在局" : "弃牌"}</strong>;
-  if (game.type === "holdem")
-    return <strong>{game.players?.[seat]?.stack ?? 0} Mtok</strong>;
+  if (game.type === "holdem") {
+    const player = game.players?.[seat];
+    return (
+      <>
+        <strong className="room-holdem-stack">
+          <span>{holdemPosition(game, seat)}</span>
+          {player?.stack ?? 0} Mtok
+        </strong>
+        <em className="room-seat-action">
+          {holdemActionLabel(game, seat)}
+          {(player?.streetBet ?? 0) > 0 ? ` · 本街 ${player?.streetBet}` : ""}
+        </em>
+      </>
+    );
+  }
   return <strong>{game.playerStates?.[seat]?.phase === "done" ? "已结算" : "进行中"}</strong>;
 }
 
@@ -488,7 +560,7 @@ function RoomGameTable({
     return (
       <>
         <div className="room-game-meta"><span>第 {game.round} 轮</span><strong>底池 {game.pot} · 闷注 {game.stake}</strong></div>
-        <RoomCards cards={game.myHand ?? []} />
+        <RoomCards cards={game.myHand ?? []} hero />
         {!game.myHand?.length && (
           <div className="room-card-backs" aria-label="三张暗牌">
             <span><CardBackArt /></span>
@@ -517,9 +589,25 @@ function RoomGameTable({
     const toCall = Math.max(0, (game.currentBet ?? 0) - (player?.streetBet ?? 0));
     return (
       <>
-        <div className="room-board"><RoomCards cards={game.board ?? []} /></div>
-        <div className="room-game-meta"><span>{game.phase}</span><strong>底池 {game.pot} Mtok</strong></div>
-        <RoomCards cards={game.myHand ?? []} />
+        <div className="room-holdem-center">
+          <header>
+            <span>{holdemStreetNames[game.phase] ?? game.phase}</span>
+            <strong>{game.pot ?? 0}</strong>
+            <small>Mtok 底池</small>
+          </header>
+          <div className="room-board room-holdem-board">
+            {(game.board?.length ?? 0) > 0 ? (
+              <RoomCards cards={game.board ?? []} />
+            ) : (
+              <span className="room-holdem-board-empty">等待翻牌</span>
+            )}
+          </div>
+          <footer>
+            当前下注 {game.currentBet ?? 0} · 最小加注 {game.minRaise ?? 0}
+          </footer>
+        </div>
+        <span className="room-holdem-hand-label">你的底牌</span>
+        <RoomCards cards={game.myHand ?? []} hero />
         <div className="room-inline-controls">
           {myTurn && game.phase !== "done" && (
             <>
