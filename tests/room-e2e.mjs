@@ -169,6 +169,28 @@ assert.equal(
   initialBalances.reduce((total, account) => total + account.balance, 0),
 );
 
+await waitFor(
+  () => activeClients.every((client) => client.snapshot?.settled === true),
+  "settlement broadcast",
+);
+const seatsBeforeReplay = activeClients[0].snapshot.players.map(
+  ({ id, seat, isBot }) => ({ id, seat, isBot }),
+);
+activeClients[0].socket.send(JSON.stringify({ type: "start", seed: 116 }));
+await waitFor(
+  () =>
+    activeClients.every(
+      (client) =>
+        client.snapshot?.phase === "playing" &&
+        client.snapshot?.gameNumber === 2,
+    ),
+  "second game start",
+);
+assert.deepEqual(
+  activeClients[0].snapshot.players.map(({ id, seat, isBot }) => ({ id, seat, isBot })),
+  seatsBeforeReplay,
+);
+
 await Promise.all(
   activeClients.map(
     (client) =>
@@ -186,6 +208,7 @@ console.log(
     landlord: bidderSeat,
     reconnectSeat,
     turns,
+    gamesStarted: activeClients[0].snapshot.gameNumber,
     balances: finalBalances.map((account) => account.balance),
     status: "passed",
   }),

@@ -92,6 +92,26 @@ test("three human seats can complete a full authoritative Doudizhu game", () => 
     settlements.reduce((total, result) => total + result.delta, 0),
     0,
   );
+
+  assert.throws(
+    () => applyRoomCommand(room, "p0", { type: "start", seed: 116 }),
+    /正在结算/,
+  );
+  room = applyRoomCommand(
+    { ...room, settled: true },
+    "p0",
+    { type: "start", seed: 116 },
+  );
+  assert.equal(room.phase, "playing");
+  assert.equal(room.gameNumber, 2);
+  assert.deepEqual(
+    room.players.map(({ id, seat, isBot }) => ({ id, seat, isBot })),
+    [
+      { id: "p0", seat: 0, isBot: false },
+      { id: "p1", seat: 1, isBot: false },
+      { id: "p2", seat: 2, isBot: false },
+    ],
+  );
 });
 
 test("room WebSocket tokens reject tampering", async () => {

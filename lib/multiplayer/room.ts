@@ -279,7 +279,9 @@ export function applyRoomCommand(
   }
   if (command.type === "start") {
     if (playerId !== state.hostId) throw new Error("只有房主可以开始");
-    if (state.phase !== "lobby") throw new Error("牌局已经开始");
+    if (state.phase === "playing") throw new Error("牌局已经开始");
+    if (state.phase === "done" && !state.settled)
+      throw new Error("上一局正在结算，请稍候");
     if (state.players.length < config[state.gameType].min)
       throw new Error(`至少需要 ${config[state.gameType].min} 名玩家或 AI`);
     if (state.players.some((candidate) => !candidate.ready))
@@ -509,8 +511,10 @@ export function roomSnapshot(state: RoomState, playerId: string) {
     hostId: state.hostId,
     me: player ? { id: player.id, seat: player.seat } : null,
     players: state.players,
+    gameNumber: state.gameNumber,
     version: state.version,
     turnDeadline: state.turnDeadline,
+    settled: state.settled,
     game: snapshotGame(state.game, player?.seat),
   };
 }

@@ -65,8 +65,10 @@ type Snapshot = {
   hostId: string;
   me: { id: string; seat: number } | null;
   players: Player[];
+  gameNumber: number;
   version: number;
   turnDeadline: number | null;
+  settled: boolean;
   game: GameSnapshot | null;
 };
 
@@ -199,6 +201,11 @@ export function MultiplayerRoom({
     [code],
   );
   const minimum = snapshot?.gameType === "blackjack" ? 1 : 3;
+  const startGame = () =>
+    send({
+      type: "start",
+      seed: crypto.getRandomValues(new Uint32Array(1))[0],
+    });
 
   return (
     <main className={`room-shell room-theme-${snapshot?.gameType ?? "doudizhu"}`}>
@@ -294,18 +301,28 @@ export function MultiplayerRoom({
                 snapshot.players.length < minimum ||
                 snapshot.players.some((player) => !player.ready)
               }
-              onClick={() =>
-                send({
-                  type: "start",
-                  seed: crypto.getRandomValues(new Uint32Array(1))[0],
-                })
-              }
+              onClick={startGame}
             >
               开始游戏
             </button>
           </>
         )}
-        {snapshot?.phase === "done" && <strong>本局已结算</strong>}
+        {snapshot?.phase === "done" && (
+          <>
+            <strong>{snapshot.settled ? "本局已结算" : "正在结算本局…"}</strong>
+            {isHost ? (
+              <button
+                className="primary"
+                disabled={!snapshot.settled}
+                onClick={startGame}
+              >
+                再来一局
+              </button>
+            ) : (
+              <span>等待房主开始下一局</span>
+            )}
+          </>
+        )}
       </section>
       {error && <p className="room-error">{error}</p>}
       <small className="room-footnote">
